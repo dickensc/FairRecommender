@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 from ratings import ratings_predicate
+from rated import rated_predicate
 
 
 def construct_movielens_predicates():
@@ -36,6 +37,7 @@ def construct_movielens_predicates():
     movies = ratings_df.movieId.unique()
 
     ratings_predicate(observed_ratings_df, truth_ratings_df)
+    rated_predicate(observed_ratings_df, truth_ratings_df)
 
 
 def partition_by_timestamp(ratings_df, train_proportion=0.8):
