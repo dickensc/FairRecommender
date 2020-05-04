@@ -4,6 +4,9 @@ def ratings_predicate(observed_ratings_df, truth_ratings_df, setting='eval'):
     """
     # TODO: standardize ratings by centering with the average user rating and so that 1 and 0 are 2 std deviations
     #  from mean
+
+
+
     # obs
     observed_ratings_series = observed_ratings_df.loc[:, ['userId', 'movieId', 'rating']].set_index(
         ['userId', 'movieId'])

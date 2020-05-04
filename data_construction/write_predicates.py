@@ -40,6 +40,7 @@ def construct_movielens_predicates():
     rated_predicate(observed_ratings_df, truth_ratings_df)
 
 
+
 def partition_by_timestamp(ratings_df, train_proportion=0.8):
     sorted_frame = ratings_df.sort_values(by='timestamp')
     return (sorted_frame.iloc[: int(sorted_frame.shape[0] * train_proportion), :],

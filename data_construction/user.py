@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-def rated_predicate(observed_ratings_df, truth_ratings_df, setting='eval'):
+def user_predicate(observed_ratings_df, truth_ratings_df, setting='eval'):
     """
     Rated Predicates
     """
@@ -12,7 +12,7 @@ def rated_predicate(observed_ratings_df, truth_ratings_df, setting='eval'):
         ['userId', 'movieId'])
 
     # obs
-    rated_series = pd.concat([observed_ratings_series, truth_ratings_series], join='outer')
-    rated_series.loc[:, :] = 1
-    rated_series.to_csv('../movielens/data/' + setting + '/rated_obs.txt',
+    user_list = pd.concat([observed_ratings_series, truth_ratings_series], join='outer').reset_index()['userId'].unique()
+    user_series = pd.Series(data=1, index=user_list)
+    user_series.to_csv('../movielens/data/' + setting + '/user_obs.txt',
                         sep='\t', header=False, index=True)
