@@ -2,6 +2,13 @@ import pandas as pd
 import os
 from ratings import ratings_predicate
 from rated import rated_predicate
+from item import item_predicate
+from user import user_predicate
+from average_item_rating import average_item_rating_predicate
+from average_user_rating import average_user_rating_predicate
+from sim_content import sim_content_predicate
+from sim_item import sim_item_predicate
+from sim_user import sim_user_predicate
 
 
 def construct_movielens_predicates():
@@ -38,7 +45,13 @@ def construct_movielens_predicates():
 
     ratings_predicate(observed_ratings_df, truth_ratings_df)
     rated_predicate(observed_ratings_df, truth_ratings_df)
-
+    item_predicate(observed_ratings_df, truth_ratings_df)
+    user_predicate(observed_ratings_df, truth_ratings_df)
+    average_item_rating_predicate(observed_ratings_df, truth_ratings_df)
+    average_user_rating_predicate(observed_ratings_df, truth_ratings_df)
+    sim_content_predicate(movies_df)
+    sim_item_predicate(observed_ratings_df, truth_ratings_df)
+    sim_user_predicate(observed_ratings_df, truth_ratings_df)
 
 
 def partition_by_timestamp(ratings_df, train_proportion=0.8):

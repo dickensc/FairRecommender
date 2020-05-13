@@ -10,8 +10,8 @@
 // These two rules can be captured in preprocess by standardizing the user ratings
 // between 0 and 1 where the average user rating is 0.5
 // Filter out users who haven't rate more than 1 movie
-// 1.0 : user(U) & item(I) & rated(U,I) & avg_user_rating(U) >> rating(U,I)^2
-// 1.0 : user(U) & item(I) & rated(U,I) & rating(U,I) >> avg_user_rating(U)^2
+1.0 : user(U) & item(I) & rated(U,I) & avg_user_rating(U) >> rating(U,I)^2
+1.0 : user(U) & item(I) & rated(U,I) & rating(U,I) >> avg_user_rating(U)^2
 1.0 : user(U) & item(I) & rated(U,I) & avg_item_rating(I) >> rating(U,I)^2
 1.0 : user(U) & item(I) & rated(U,I) & rating(U,I) >> avg_item_rating(I)^2
 
