@@ -3,7 +3,7 @@ import pandas as pd
 
 def item_predicate(observed_ratings_df, truth_ratings_df, setting='eval'):
     """
-    Rated Predicates
+    Item Predicates
     """
     observed_ratings_series = observed_ratings_df.loc[:, ['userId', 'movieId', 'rating']].set_index(
         ['userId', 'movieId'])
