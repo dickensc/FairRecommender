@@ -10,6 +10,8 @@ from sim_content import sim_content_predicate
 from sim_item import sim_item_predicate
 from sim_user import sim_user_predicate
 
+PSL_DATASET_PATH = '../psl-datasets'
+
 
 def construct_movielens_predicates():
     """
@@ -29,8 +31,8 @@ def construct_movielens_predicates():
     """
     Create data directory to write output to
     """
-    if not os.path.exists('../movielens/data/eval/'):
-        os.makedirs('../movielens/data/eval/')
+    if not os.path.exists(PSL_DATASET_PATH + '/movielens/data/eval/'):
+        os.makedirs(PSL_DATASET_PATH + '/movielens/data/eval/')
 
     """
     Assuming that the raw data already exists in the data directory
@@ -72,18 +74,18 @@ def load_dataframes():
     """
     Assuming that the raw data already exists in the data directory
     """
-    movies_df = pd.read_csv("../movielens/data/ml-100k/u.item", sep='|', header=None, encoding="ISO-8859-1")
+    movies_df = pd.read_csv(PSL_DATASET_PATH + "/movielens/data/ml-100k/u.item", sep='|', header=None, encoding="ISO-8859-1")
     movies_df.columns = ["movieId", "movie title", "release date", "video release date", "IMDb URL ", "unknown", "Action",
                      "Adventure", "Animation", "Children's", "Comedy", "Crime", "Documentary", "Drama", "Fantasy",
                      "Film-Noir", "Horror", "Musical", "Mystery", "Romance", "Sci-Fi", "Thriller", "War", "Western"]
     movies_df = movies_df.set_index('movieId')
 
-    ratings_df = pd.read_csv('../movielens/data/ml-100k/u.data', sep='\t', header=None)
+    ratings_df = pd.read_csv(PSL_DATASET_PATH + '/movielens/data/ml-100k/u.data', sep='\t', header=None)
     ratings_df.columns = ['userId', 'movieId', 'rating', 'timestamp']
     ratings_df = ratings_df.astype({'userId': str, 'movieId': str})
     ratings_df.rating = ratings_df.rating / ratings_df.rating.max()
 
-    user_df = pd.read_csv('../movielens/data/ml-100k/u.user', sep='|', header=None, encoding="ISO-8859-1")
+    user_df = pd.read_csv(PSL_DATASET_PATH + '/movielens/data/ml-100k/u.user', sep='|', header=None, encoding="ISO-8859-1")
     user_df.columns = ['userId', 'age', 'gender', 'occupation', 'zip']
     user_df = user_df.set_index('userId')
 
