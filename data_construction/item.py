@@ -1,7 +1,8 @@
 import pandas as pd
+from helpers import write
 
 
-def item_predicate(observed_ratings_df, truth_ratings_df, setting='eval'):
+def item_predicate(observed_ratings_df, truth_ratings_df, PSL_DATASET_PATH, fold='0', setting='eval'):
     """
     Item Predicates
     """
@@ -14,5 +15,4 @@ def item_predicate(observed_ratings_df, truth_ratings_df, setting='eval'):
     # obs
     item_list = pd.concat([observed_ratings_series, truth_ratings_series], join='outer').reset_index()['movieId'].unique()
     item_series = pd.Series(data=1, index=item_list)
-    item_series.to_csv('../movielens/data/' + setting + '/item_obs.txt',
-                        sep='\t', header=False, index=True)
+    write(item_series, 'item_obs', fold, setting)

@@ -1,7 +1,9 @@
 import pandas as pd
 import numpy as np
+from helpers import write
 
-def sim_content_items_predicate(movies_df, setting='eval'):
+
+def sim_content_predicate(movies_df, PSL_DATASET_PATH, fold='0', setting='eval'):
     """
     Ratings Predicates
     """
@@ -27,6 +29,4 @@ def sim_content_items_predicate(movies_df, setting='eval'):
     item_content_similarity_block_index = pd.MultiIndex.from_arrays([item_index, flattened_frame])
     item_content_similarity_block_series = pd.Series(data=1, index=item_content_similarity_block_index)
 
-    item_content_similarity_block_series.to_csv(
-        '../movielens/data/' + setting + '/sim_content_items_obs.txt',
-        sep='\t', header=False, index=True)
+    write(item_content_similarity_block_series, 'sim_content_items_obs', fold, setting)

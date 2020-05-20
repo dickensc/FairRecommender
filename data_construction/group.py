@@ -1,7 +1,8 @@
 import pandas as pd
+from helpers import write
 
 
-def group_predicate(user_df, setting='eval'):
+def group_predicate(user_df, PSL_DATASET_PATH, fold='0', setting='eval'):
     """
     group Predicates
 
@@ -9,3 +10,5 @@ def group_predicate(user_df, setting='eval'):
     group: possible values are M or F, therefore sort by when 'M' or 'F' in second column
     only need user_df
     """
+    group_series = pd.Series(data=1, index=user_df.gender.unique())
+    write(group_series, 'group_obs', fold, setting)

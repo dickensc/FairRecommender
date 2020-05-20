@@ -1,7 +1,8 @@
 import pandas as pd
+from helpers import write
 
 
-def rated_predicate(observed_ratings_df, truth_ratings_df, setting='eval'):
+def rated_predicate(observed_ratings_df, truth_ratings_df, PSL_DATASET_PATH, fold='0', setting='eval'):
     """
     Rated Predicates
     """
@@ -14,5 +15,4 @@ def rated_predicate(observed_ratings_df, truth_ratings_df, setting='eval'):
     # obs
     rated_series = pd.concat([observed_ratings_series, truth_ratings_series], join='outer')
     rated_series.loc[:, :] = 1
-    rated_series.to_csv('../movielens/data/' + setting + '/rated_obs.txt',
-                        sep='\t', header=False, index=True)
+    write(rated_series, 'rated_obs', fold, setting)

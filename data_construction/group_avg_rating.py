@@ -1,4 +1,8 @@
-def group_average_rating_predicate(user_df, observed_ratings_df, truth_ratings_df, setting='eval'):
+import pandas as pd
+from helpers import write
+
+
+def group_average_rating_predicate(user_df, PSL_DATASET_PATH, fold='0', setting='eval'):
     """
     group_average_rating Predicates
 
@@ -11,3 +15,5 @@ def group_average_rating_predicate(user_df, observed_ratings_df, truth_ratings_d
         G1 and G2 corresponding to 'M' or 'F'
         equalized to enforce non-parity unfairness
     """
+    group_series = pd.Series(data=1, index=user_df.gender.unique())
+    write(group_series, 'group_avg_rating_targets', fold, setting)

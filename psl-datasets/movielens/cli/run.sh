@@ -8,23 +8,27 @@ readonly PSL_VERSION='2.2.1'
 readonly JAR_PATH="./psl-cli-${PSL_VERSION}.jar"
 readonly FETCH_DATA_SCRIPT='../data/fetchData.sh'
 readonly BASE_NAME='movielens'
+readonly POSTGRES_DB='psl'
+readonly STANDARD_PSL_OPTIONS="--postgres ${POSTGRES_DB}"
 
-readonly ADDITIONAL_PSL_OPTIONS='--int-ids'
+#readonly ADDITIONAL_PSL_OPTIONS='--int-ids'
 readonly ADDITIONAL_LEARN_OPTIONS='--learn'
-readonly ADDITIONAL_EVAL_OPTIONS='--infer --eval org.linqs.psl.evaluation.statistics.ContinuousEvaluator'
+readonly ADDITIONAL_EVAL_OPTIONS='-D log4j.threshold=TRACE --infer --eval org.linqs.psl.evaluation.statistics.ContinuousEvaluator'
+
+readonly JAVA_MEM_GB=24
 
 function main() {
    trap exit SIGINT
 
    # Get the data
-   getData
+   #getData
 
    # Make sure we can run PSL.
    check_requirements
    fetch_psl
 
    # Run PSL
-   runWeightLearning "$@"
+   #runWeightLearning "$@"
    runEvaluation "$@"
 }
 
@@ -50,7 +54,7 @@ function runWeightLearning() {
 function runEvaluation() {
    echo "Running PSL Inference"
 
-   java -jar "${JAR_PATH}" --model "${BASE_NAME}-learned.psl" --data "${BASE_NAME}-eval.data" --output inferred-predicates ${ADDITIONAL_EVAL_OPTIONS} ${ADDITIONAL_PSL_OPTIONS} "$@"
+   java -Xmx${JAVA_MEM_GB}G -Xms${JAVA_MEM_GB}G -jar "${JAR_PATH}" --model "${BASE_NAME}_non_parity.psl" --data "${BASE_NAME}-eval.data" --output inferred-predicates ${ADDITIONAL_EVAL_OPTIONS} ${ADDITIONAL_PSL_OPTIONS} "$@"
    if [[ "$?" -ne 0 ]]; then
       echo 'ERROR: Failed to run infernce'
       exit 70

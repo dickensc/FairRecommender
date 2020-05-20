@@ -3,6 +3,13 @@ import numpy as np
 
 from sklearn.metrics import pairwise_distances
 
+PSL_DATASET_PATH = '../psl-datasets'
+
+
+def write(frame, predicate_name, fold, setting):
+    frame.to_csv(PSL_DATASET_PATH + '/movielens/data/movielens/' + fold + '/' + setting + '/' + predicate_name + '.txt',
+                 sep='\t', header=False, index=True)
+
 
 def query_relevance_cosine_similarity(relevance_df, query_index, item_index, fill=True):
     """

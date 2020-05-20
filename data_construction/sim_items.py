@@ -2,9 +2,10 @@ import pandas as pd
 import numpy as np
 
 from helpers import query_relevance_cosine_similarity
+from helpers import write
 
 
-def sim_items_predicate(observed_ratings_df, truth_ratings_df, movies, setting='eval'):
+def sim_items_predicate(observed_ratings_df, truth_ratings_df, movies, PSL_DATASET_PATH, fold='0', setting='eval'):
     """
     Item Similarity Predicate: sim_cosine_items, built only from observed ratings
     """
@@ -24,5 +25,4 @@ def sim_items_predicate(observed_ratings_df, truth_ratings_df, movies, setting='
     item_cosine_similarity_block_index = pd.MultiIndex.from_arrays([item_index, flattened_frame])
     item_cosine_similarity_block_series = pd.Series(data=1, index=item_cosine_similarity_block_index)
 
-    item_cosine_similarity_block_series.to_csv('../movielens/data/' + setting + '/sim_cosine_items_obs.txt',
-                                               sep='\t', header=False, index=True)
+    write(item_cosine_similarity_block_series, 'sim_items_obs', fold, setting)

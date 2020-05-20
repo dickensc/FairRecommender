@@ -1,4 +1,7 @@
-def group_avg_item_rating_predicate(user_df, observed_ratings_df, truth_ratings_df, setting='eval'):
+import pandas as pd
+from helpers import write
+
+def group_average_item_rating_predicate(user_df, movies_df, PSL_DATASET_PATH, fold='0', setting='eval'):
     """
     group_avg_item_rating Predicates
 
@@ -10,3 +13,8 @@ def group_avg_item_rating_predicate(user_df, observed_ratings_df, truth_ratings_
     group_avg_item_rating(G, +I) / |I| = group_avg_rating(G) {I: group_item_block(G, I)}
 
     """
+    group_avg_item_rating_index = pd.MultiIndex.from_product([user_df.gender.unique(), movies_df.index.values],
+                                                             names=['group', 'movie_id'])
+    group_avg_item_rating_dataframe = pd.DataFrame(index=group_avg_item_rating_index, columns=['value'])
+    group_avg_item_rating_dataframe.value = 1
+    write(group_avg_item_rating_dataframe, 'group_avg_item_rating_targets', fold, setting)
