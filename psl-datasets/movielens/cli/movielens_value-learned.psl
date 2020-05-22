@@ -1,0 +1,32 @@
+// Similarities like Pearson, Cosine, and Adjusted Cosine Similarity between items.
+1.0 : rated(U,I1) & rated(U,I2) & rating(U,I1) & sim_items(I1,I2) >> rating(U,I2)^2
+
+// Similarities like Pearson and Cosine Similarity between users.
+1.0 : rated(U1,I) & rated(U2,I) & rating(U1,I) & sim_users(U1,U2) >> rating(U2,I)^2
+
+// Predictions by different other methods like SGD, Item based Pearson methods, and BPMF methods.
+
+// Average prior of user rating and item ratings.
+// These two rules can be captured in preprocess by standardizing the user ratings
+// between 0 and 1 where the average user rating is 0.5
+// Filter out users who haven't rate more than 1 movie
+1.0 : rated(U,I) & avg_user_rating(U) >> rating(U,I)^2
+1.0 : rated(U,I) & rating(U,I) >> avg_user_rating(U)^2
+1.0 : rated(U,I) & avg_item_rating(I) >> rating(U,I)^2
+1.0 : rated(U,I) & rating(U,I) >> avg_item_rating(I)^2
+
+// Content rule by similarity.
+1.0 : rated(U,I1) & rated(U,I2) & rating(U,I1) & sim_content_items(I1,I2) >> rating(U,I2)^2
+
+// Value Unfairness
+// Minimizes the inconsistency in signed estimation error across groups
+// U_val = 1/n \sum_j |(average_predicted_rating_j_g1 - average_true_rating_j_g1 ) -
+//                     (average_predicted_rating_j_g2 - average_true_rating_j_g2 )|
+// The Value unfairness can be added as a regularization term to the loss function and weight learning
+// can provide weights that would
+
+1.0 : group_1(U) & positive_prior(c) >> rating(U, I)^2
+1.0 : group_1(U) & rating(U, I) >> negative_prior(c)^2
+
+1.0 : group_2(U) & positive_prior(c) >> rating(U, I)^2
+1.0 : group_2(U) & rating(U, I) >> negative_prior(c)^2

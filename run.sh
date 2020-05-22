@@ -31,39 +31,6 @@ function main() {
         # shellcheck disable=SC2086
         ./run_fairness_experiments.sh "psl" ${psl_dataset_paths}
     popd > /dev/null
-
-     # Tuffy Experiments
-     # Initialize Tuffy environment
-     # shellcheck disable=SC2086
-     ./scripts/tuffy_scripts/tuffy_init.sh ${tuffy_dataset_paths}
-
-     # Convert psl formatted data into tuffy formatted data
-     # shellcheck disable=SC2086
-     ./scripts/tuffy_scripts/tuffy_convert.sh ${tuffy_dataset_paths}
-
-     # run tuffy performance experiments
-     echo "Running tuffy performance experiments on datasets: [${TUFFY_DATASETS}]."
-     pushd . > /dev/null
-         cd "./scripts" || exit
-         # shellcheck disable=SC2086
-         ./run_weight_learning_performance_experiments.sh "tuffy" ${tuffy_dataset_paths}
-     popd > /dev/null
-
-    echo "Running tuffy robustness experiments on datasets: [${TUFFY_DATASETS}]."
-    # shellcheck disable=SC2086
-    pushd . > /dev/null
-        cd "./scripts" || exit
-        # shellcheck disable=SC2086
-        ./run_weight_learning_robustness_experiments.sh "tuffy" ${tuffy_dataset_paths}
-    popd > /dev/null
-
-    echo "Running tuffy sampling experiments on datasets: [${TUFFY_DATASETS}]."
-    # shellcheck disable=SC2086
-    pushd . > /dev/null
-        cd "./scripts" || exit
-        # shellcheck disable=SC2086
-        ./run_weight_learning_sampling_experiments.sh "tuffy" ${tuffy_dataset_paths}
-    popd > /dev/null
 }
 
 main "$@"

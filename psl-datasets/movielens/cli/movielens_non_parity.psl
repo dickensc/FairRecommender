@@ -18,6 +18,9 @@
 // Non-Parity Unfairness Constraints
 // Non parity minimizes the absolute difference between the overall average
 // predicted ratings between the groups
-rating(+U, I)/|U| = group_avg_item_rating(G, I) . {U: group_member(U, G) & target(U, I)}
+// The group_avg_rating rating should be weighted by the number of rating that item received for that group.
+// rating(+U, +I) / @Max[1, |U|] = group_avg_rating(G) . {U: group_member(U, G) & target(U, I)} {I: group_member(U, G) & target(U, I)}
+
+rating(+U, I)/@Max[1, |U|] = group_avg_item_rating(G, I) . {U: group_member(U, G) & target(U, I)}
 group_avg_item_rating(G, +I)/|I| = group_avg_rating(G) . {I: group_item_block(G, I)}
 1.0 : group_avg_rating(G1) = group_avg_rating(G2)^2

@@ -1,0 +1,4 @@
+movielens 0 22  performance_study UNIFORM Continuous /Users/charlesdickens/Documents/GitHub/FairRecommender/scripts/../results/fairness/psl/performance_study/movielens/UNIFORM/Continuous/base/0 base
+USAGE: ./run_wl.sh <example name> <fold> <seed> <alpha> <study> <wl_method> <evaluator> <outDir> <trace_level> <model>
+USAGE: Examples can be among: movielens
+USAGE: Weight Learning methods can be among: UNIFORM BOWLOS BOWLSS CRGS HB RGS LME MLE MPLE

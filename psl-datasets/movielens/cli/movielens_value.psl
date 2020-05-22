@@ -25,9 +25,8 @@
 // The Value unfairness can be added as a regularization term to the loss function and weight learning
 // can provide weights that would
 
-// predicted preference
-1.0 : rating(U, I) & Group_1(U) = 1 ^2
-1.0 : rating(U, I) & Group_1(U) = 0 ^2
+1.0 : group_1(U) & positive_prior(c) >> rating(U, I)^2
+1.0 : group_1(U) & rating(U, I) >> negative_prior(c)^2
 
-1.0 : rating(U, I) & Group_2(U) = 1 ^2
-1.0 : rating(U, I) & Group_2(U) = 0 ^2
+1.0 : group_2(U) & positive_prior(c) >> rating(U, I)^2
+1.0 : group_2(U) & rating(U, I) >> negative_prior(c)^2

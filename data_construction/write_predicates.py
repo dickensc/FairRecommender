@@ -11,6 +11,10 @@ from sim_content import sim_content_predicate
 from sim_items import sim_items_predicate
 from sim_users import sim_users_predicate
 from group import group_predicate
+from group_1 import group_1
+from group_2 import group_2
+from negative_prior import negative_prior
+from positive_prior import positive_prior
 from group_member import group_member_predicate
 from target import target_predicate
 from group_avg_item_rating import group_average_item_rating_predicate
@@ -48,7 +52,7 @@ def construct_movielens_predicates():
     movies_df, ratings_df, user_df = filter_dataframes(movies_df, ratings_df, user_df)
     # note that truth and target will have the same atoms
     observed_ratings_df, truth_ratings_df = partition_by_timestamp(ratings_df)
-    observed_ratings_df, truth_ratings_df = filter_frame_by_group_rating(observed_ratings_df, truth_ratings_df, user_df)
+    # observed_ratings_df, truth_ratings_df = filter_frame_by_group_rating(observed_ratings_df, truth_ratings_df, user_df)
 
     users = np.union1d(observed_ratings_df.userId.unique(), truth_ratings_df.userId.unique())
     movies = np.union1d(observed_ratings_df.movieId.unique(), truth_ratings_df.movieId.unique())
@@ -60,7 +64,11 @@ def construct_movielens_predicates():
     item_predicate(observed_ratings_df, truth_ratings_df, PSL_DATASET_PATH)
     user_predicate(observed_ratings_df, truth_ratings_df, PSL_DATASET_PATH)
     group_predicate(user_df, PSL_DATASET_PATH)
+    negative_prior(PSL_DATASET_PATH)
+    positive_prior(PSL_DATASET_PATH)
     group_member_predicate(user_df, PSL_DATASET_PATH)
+    group_1(user_df, PSL_DATASET_PATH)
+    group_2(user_df, PSL_DATASET_PATH)
     target_predicate(truth_ratings_df, PSL_DATASET_PATH)
     average_item_rating_predicate(observed_ratings_df, truth_ratings_df, PSL_DATASET_PATH)
     average_user_rating_predicate(observed_ratings_df, truth_ratings_df, PSL_DATASET_PATH)

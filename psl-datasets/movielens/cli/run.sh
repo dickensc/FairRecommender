@@ -4,7 +4,7 @@
 # These options are blind-passed to the CLI.
 # Ex: ./run.sh -D log4j.threshold=DEBUG
 
-readonly PSL_VERSION='2.2.1'
+readonly PSL_VERSION='2.3.0-SNAPSHOT'
 readonly JAR_PATH="./psl-cli-${PSL_VERSION}.jar"
 readonly FETCH_DATA_SCRIPT='../data/fetchData.sh'
 readonly BASE_NAME='movielens'
@@ -13,23 +13,26 @@ readonly STANDARD_PSL_OPTIONS="--postgres ${POSTGRES_DB}"
 
 #readonly ADDITIONAL_PSL_OPTIONS='--int-ids'
 readonly ADDITIONAL_LEARN_OPTIONS='--learn'
-readonly ADDITIONAL_EVAL_OPTIONS='-D log4j.threshold=TRACE --infer --eval org.linqs.psl.evaluation.statistics.ContinuousEvaluator'
+readonly ADDITIONAL_EVAL_OPTIONS='--infer --eval org.linqs.psl.evaluation.statistics.ContinuousEvaluator '
 
 readonly JAVA_MEM_GB=24
 
 function main() {
    trap exit SIGINT
+   local model=$1
+
+   shift 1
 
    # Get the data
-   #getData
+   # getData
 
    # Make sure we can run PSL.
    check_requirements
    fetch_psl
 
    # Run PSL
-   #runWeightLearning "$@"
-   runEvaluation "$@"
+   runWeightLearning "$@"
+   runEvaluation "$model" "$@"
 }
 
 function getData() {
@@ -44,7 +47,7 @@ function getData() {
 function runWeightLearning() {
    echo "Running PSL Weight Learning"
 
-   java -jar "${JAR_PATH}" --model "${BASE_NAME}.psl" --data "${BASE_NAME}-learn.data" ${ADDITIONAL_LEARN_OPTIONS} ${ADDITIONAL_PSL_OPTIONS} "$@"
+   java -XmxG -XmsG -jar "${JAR_PATH}" --model "${BASE_NAME}.psl" --data "${BASE_NAME}-learned.data" ${ADDITIONAL_LEARN_OPTIONS} ${ADDITIONAL_PSL_OPTIONS} "$@"
    if [[ "$?" -ne 0 ]]; then
       echo 'ERROR: Failed to run weight learning'
       exit 60
@@ -52,9 +55,11 @@ function runWeightLearning() {
 }
 
 function runEvaluation() {
+   local model=$1
+   local extra_options=$2
    echo "Running PSL Inference"
 
-   java -Xmx${JAVA_MEM_GB}G -Xms${JAVA_MEM_GB}G -jar "${JAR_PATH}" --model "${BASE_NAME}_non_parity.psl" --data "${BASE_NAME}-eval.data" --output inferred-predicates ${ADDITIONAL_EVAL_OPTIONS} ${ADDITIONAL_PSL_OPTIONS} "$@"
+   java -Xmx${JAVA_MEM_GB}G -Xms${JAVA_MEM_GB}G -jar "${JAR_PATH}" --model "${BASE_NAME}_${model}-learned.psl" --data "${BASE_NAME}-eval.data" --output inferred-predicates ${ADDITIONAL_EVAL_OPTIONS} ${ADDITIONAL_PSL_OPTIONS} "$extra_options"
    if [[ "$?" -ne 0 ]]; then
       echo 'ERROR: Failed to run infernce'
       exit 70
