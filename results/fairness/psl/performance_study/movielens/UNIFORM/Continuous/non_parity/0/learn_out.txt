@@ -1,1 +1,0 @@
-movielens 0 22 performance_study UNIFORM Continuous /Users/charlesdickens/Documents/GitHub/FairRecommender/scripts/../results/fairness/psl/performance_study/movielens/UNIFORM/Continuous/non_parity/0 TRACE non_parity
