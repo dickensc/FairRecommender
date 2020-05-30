@@ -1,0 +1,37 @@
+// Closed predicates
+*sim_items(item, item)
+*sim_users(user,user)
+*sim_content_items(item, item)
+*avg_item_rating(item)
+*rated(user, item)
+*group_1(user)
+*group_2(user)
+*target(user, item)
+*nmf_rating(user, item)
+
+// Target predicate
+rating(user, item)
+
+rating(u, i) := rated(u, i) .
+
+// Similarities like Pearson, Cosine, and Adjusted Cosine Similarity between item ratings.
+1.0 rated(u,i1), rated(u,i2), rating(u,i1), sim_items(i1,i2) => rating(u,i2)
+1.0 rated(u,i1), rated(u,i2), !rating(u,i1), sim_items(i1,i2) => !rating(u,i2)
+
+// Similarities like Pearson and Cosine Similarity between user ratings.
+1.0 rated(u1,i), rated(u2,i), rating(u1,i), sim_users(u1,u2) => rating(u2,i)
+1.0 rated(u1,i), rated(u2,i), !rating(u1,i), sim_users(u1,u2) => !rating(u2,i)
+
+// Predictions by local nmf predictor
+1.0 nmf_rating(u, i), target(u, i) => rating(u, i)
+
+// Content rule by similarity.
+1.0 rated(u,i1), rated(u,i2), rating(u,i1), sim_content_items(i1,i2) => rating(u,i2)
+1.0 rated(u,i1), rated(u,i2), !rating(u,i1), sim_content_items(i1,i2) => !rating(u,i2)
+
+// Value intervention
+1.0 group_1(u) => rating(u,i)
+1.0 group_1(u) => !rating(u,i)
+
+1.0 group_2(u) => rating(u,i)
+1.0 group_2(u) => !rating(u,i)

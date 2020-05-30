@@ -2,7 +2,7 @@ import pandas as pd
 from helpers import write
 
 
-def group_item_block_predicate(user_df, truth_ratings_df, PSL_DATASET_PATH, fold='0', setting='eval'):
+def group_item_block_predicate(user_df, truth_ratings_df, fold='0', setting='eval'):
     """
     group_item_block Predicates
 
@@ -18,3 +18,5 @@ def group_item_block_predicate(user_df, truth_ratings_df, PSL_DATASET_PATH, fold
     group_movie_df = pd.DataFrame(index=group_movie_index, columns=['value'])
     group_movie_df.value = 1
     write(group_movie_df, 'group_item_block_obs', fold, setting)
+    write(group_movie_df.loc['F'], 'group_1_item_block_obs', fold, setting)
+    write(group_movie_df.loc['M'], 'group_2_item_block_obs', fold, setting)

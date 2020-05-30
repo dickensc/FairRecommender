@@ -12,26 +12,29 @@ readonly WL_METHODS='UNIFORM'
 readonly SEED=22
 readonly TRACE_LEVEL='TRACE'
 
-declare -A SUPPORTED_WL_METHODS
-SUPPORTED_WL_METHODS[psl]='UNIFORM CRGS HB RGS BOWLSS LME MLE MPLE'
-SUPPORTED_WL_METHODS[tuffy]='UNIFORM DiagonalNewton CRGS HB RGS BOWLOS'
+declare -A SUPPORTED_DATASETS
+SUPPORTED_DATASETS[psl]='movielens'
+SUPPORTED_DATASETS[tuffy]='movielens movielens_non_parity movielens_value'
 
 declare -A SUPPORTED_FAIRNESS_MODELS
-SUPPORTED_FAIRNESS_MODELS[psl]='BASELINE non_parity'
-SUPPORTED_FAIRNESS_MODELS[tuffy]='BASELINE non_parity'
+SUPPORTED_FAIRNESS_MODELS[psl]='base non_parity value'
+SUPPORTED_FAIRNESS_MODELS[tuffy]='base'
 
 # set of currently supported examples
-readonly SUPPORTED_DATASETS='movielens'
 readonly SUPPORTED_MODEL_TYPES='psl tuffy'
 
 # Evaluators to be use for each example
 declare -A DATASET_EVALUATORS
 DATASET_EVALUATORS[movielens]='Continuous'
+DATASET_EVALUATORS[movielens_non_parity]='Continuous'
+DATASET_EVALUATORS[movielens_value]='Continuous'
 
 # Evaluators to be use for each example
 # todo: (Charles D.) just read this information from psl example data directory rather than hardcoding
 declare -A DATASET_FOLDS
 DATASET_FOLDS[movielens]=1
+DATASET_FOLDS[movielens_non_parity]=1
+DATASET_FOLDS[movielens_value]=1
 
 declare -A MODEL_TYPE_TO_FILE_EXTENSION
 MODEL_TYPE_TO_FILE_EXTENSION[psl]="psl"
@@ -43,13 +46,14 @@ function run_example() {
     local example_directory=$2
     local wl_method=$3
     local fairness_model=$4
+    local fold=$5
 
     local example_name
     example_name=$(basename "${example_directory}")
 
     local cli_directory="${BASE_DIR}/${example_directory}/cli"
 
-    out_directory="${BASE_OUT_DIR}/${srl_model_type}/performance_study/${example_name}/${wl_method}/${evaluator}/${fairness_model}/${fold}"
+    out_directory="${BASE_OUT_DIR}/${srl_model_type}/performance_study/${example_name}/${wl_method}/${evaluator}/${fold}/${fairness_model}"
 
     # Only make a new out directory if it does not already exist
     [[ -d "$out_directory" ]] || mkdir -p "$out_directory"
@@ -101,8 +105,6 @@ function main() {
 
     if [[ $# -le 1 ]]; then
         echo "USAGE: $0 <srl modeltype> <example dir> ..."
-        echo "USAGE: SRL model types may be among: ${SUPPORTED_MODEL_TYPES}"
-        echo "USAGE: Example Directories can be among: ${SUPPORTED_EXAMPLES}"
         exit 1
     fi
 
@@ -112,13 +114,17 @@ function main() {
     local example_name
 
     for example_directory in "$@"; do
+        echo "$example_directory"
         for wl_method in ${WL_METHODS}; do
            example_name=$(basename "${example_directory}")
            for evaluator in ${DATASET_EVALUATORS[${example_name}]}; do
               for ((fold=0; fold<${DATASET_FOLDS[${example_name}]}; fold++)) do
                  for fairness_model in ${FAIRNESS_MODELS}; do
-                    if [[ "${SUPPORTED_WL_METHODS[${srl_modeltype}]}" == *"${wl_method}"* ]]; then
-                      run_example "${srl_modeltype}" "${example_directory}" "${wl_method}" "${fairness_model}"
+                    #echo "$example_name"
+                    if [[ "${SUPPORTED_DATASETS[${srl_modeltype}]}" == *"${example_name}"* ]]; then
+                        if [[ "${SUPPORTED_FAIRNESS_MODELS[${srl_modeltype}]}" == *"${fairness_model}"* ]]; then
+                            run_example "${srl_modeltype}" "${example_directory}" "${wl_method}" "${fairness_model}" "${fold}"
+                        fi
                     fi
                  done
               done

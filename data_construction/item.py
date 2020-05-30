@@ -2,7 +2,7 @@ import pandas as pd
 from helpers import write
 
 
-def item_predicate(observed_ratings_df, truth_ratings_df, PSL_DATASET_PATH, fold='0', setting='eval'):
+def item_predicate(observed_ratings_df, truth_ratings_df, fold='0', setting='eval'):
     """
     Item Predicates
     """

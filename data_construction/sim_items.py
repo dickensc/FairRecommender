@@ -5,7 +5,7 @@ from helpers import query_relevance_cosine_similarity
 from helpers import write
 
 
-def sim_items_predicate(observed_ratings_df, truth_ratings_df, movies, PSL_DATASET_PATH, fold='0', setting='eval'):
+def sim_items_predicate(observed_ratings_df, truth_ratings_df, movies, fold='0', setting='eval'):
     """
     Item Similarity Predicate: sim_cosine_items, built only from observed ratings
     """

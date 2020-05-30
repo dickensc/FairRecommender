@@ -43,15 +43,25 @@ def load_file(filename):
     return output
 
 
-def load_user_df():
-    pass
+def load_user_frame(dataset):
+    # path to this file relative to caller
+    dirname = os.path.dirname(__file__)
+
+    user_path = "{}/../psl-datasets/{}/data/ml-100k/u.user".format(dirname, dataset)
+    user_df = pd.read_csv(user_path, sep='|', header=None,
+                          encoding="ISO-8859-1")
+    user_df.columns = ['userId', 'age', 'gender', 'occupation', 'zip']
+    user_df = user_df.astype({'userId': int})
+    user_df = user_df.set_index('userId')
+
+    return user_df
 
 
 def load_observed_frame(dataset, fold, predicate, phase='eval'):
     # path to this file relative to caller
     dirname = os.path.dirname(__file__)
 
-    observed_path = "{}/../psl-examples/{}/data/{}/{}/{}/{}_obs.txt".format(dirname, dataset, dataset, fold, phase, predicate)
+    observed_path = "{}/../psl-datasets/{}/data/{}/{}/{}/{}_obs.txt".format(dirname, dataset, dataset, fold, phase, predicate)
     observed_df = pd.read_csv(observed_path, sep='\t', header=None)
 
     # clean up column names and set multi-index for predicate
@@ -68,7 +78,7 @@ def load_truth_frame(dataset, fold, predicate, phase='eval'):
     # path to this file relative to caller
     dirname = os.path.dirname(__file__)
 
-    truth_path = "{}/../psl-examples/{}/data/{}/{}/{}/{}_truth.txt".format(dirname, dataset, dataset, fold, phase, predicate)
+    truth_path = "{}/../psl-datasets/{}/data/{}/{}/{}/{}_truth.txt".format(dirname, dataset, dataset, fold, phase, predicate)
     truth_df = pd.read_csv(truth_path, sep='\t', header=None)
 
     # clean up column names and set multi-index for predicate
@@ -88,11 +98,11 @@ def load_target_frame(dataset, fold, predicate, phase='eval'):
     # TODO: (Charles D.) This is a hack, there should be a way to find what
     #  the suffix should be for this file from the cli in the psl-examples but its either target or targets
     try:
-        target_path = "{}/../psl-examples/{}/data/{}/{}/{}/{}_target.txt".format(dirname, dataset, dataset, fold,
+        target_path = "{}/../psl-datasets/{}/data/{}/{}/{}/{}_target.txt".format(dirname, dataset, dataset, fold,
                                                                                  phase, predicate)
         target_df = pd.read_csv(target_path, sep='\t', header=None)
     except FileNotFoundError as err:
-        target_path = "{}/../psl-examples/{}/data/{}/{}/{}/{}_targets.txt".format(dirname, dataset, dataset, fold,
+        target_path = "{}/../psl-datasets/{}/data/{}/{}/{}/{}_targets.txt".format(dirname, dataset, dataset, fold,
                                                                                   phase, predicate)
         target_df = pd.read_csv(target_path, sep='\t', header=None)
         

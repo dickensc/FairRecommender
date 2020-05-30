@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import os
 from ratings import ratings_predicate
+from nmf_ratings import nmf_ratings_predicate
 from rated import rated_predicate
 from item import item_predicate
 from user import user_predicate
@@ -11,6 +12,9 @@ from sim_content import sim_content_predicate
 from sim_items import sim_items_predicate
 from sim_users import sim_users_predicate
 from group import group_predicate
+from group_1_avg_rating import group1_avg_rating_predicate
+from group_2_avg_rating import group2_avg_rating_predicate
+from constant import constant_predicate
 from group_1 import group_1
 from group_2 import group_2
 from negative_prior import negative_prior
@@ -26,17 +30,6 @@ PSL_DATASET_PATH = '../psl-datasets'
 
 def construct_movielens_predicates():
     """
-    :param books_df:
-    :param interactions_df:
-    :param reviews_df:
-    :param obs_interactions:
-    :param obs_reviews:
-    :param target_interactions:
-    :param target_reviews:
-    :param truth_interactions:
-    :param truth_reviews:
-    :param setting:
-    :return:
     """
 
     """
@@ -59,25 +52,29 @@ def construct_movielens_predicates():
     movies_df = movies_df.loc[movies]
     user_df = user_df.loc[users]
 
-    ratings_predicate(observed_ratings_df, truth_ratings_df, PSL_DATASET_PATH)
-    rated_predicate(observed_ratings_df, truth_ratings_df, PSL_DATASET_PATH)
-    item_predicate(observed_ratings_df, truth_ratings_df, PSL_DATASET_PATH)
-    user_predicate(observed_ratings_df, truth_ratings_df, PSL_DATASET_PATH)
-    group_predicate(user_df, PSL_DATASET_PATH)
-    negative_prior(PSL_DATASET_PATH)
-    positive_prior(PSL_DATASET_PATH)
-    group_member_predicate(user_df, PSL_DATASET_PATH)
-    group_1(user_df, PSL_DATASET_PATH)
-    group_2(user_df, PSL_DATASET_PATH)
-    target_predicate(truth_ratings_df, PSL_DATASET_PATH)
-    average_item_rating_predicate(observed_ratings_df, truth_ratings_df, PSL_DATASET_PATH)
-    average_user_rating_predicate(observed_ratings_df, truth_ratings_df, PSL_DATASET_PATH)
-    group_average_item_rating_predicate(user_df, movies_df, PSL_DATASET_PATH)
-    group_average_rating_predicate(user_df, PSL_DATASET_PATH)
-    group_item_block_predicate(user_df, truth_ratings_df, PSL_DATASET_PATH)
-    sim_content_predicate(movies_df, PSL_DATASET_PATH)
-    sim_items_predicate(observed_ratings_df, truth_ratings_df, movies, PSL_DATASET_PATH)
-    sim_users_predicate(observed_ratings_df, truth_ratings_df, users, PSL_DATASET_PATH)
+    ratings_predicate(observed_ratings_df, truth_ratings_df)
+    nmf_ratings_predicate(observed_ratings_df, truth_ratings_df)
+    rated_predicate(observed_ratings_df, truth_ratings_df)
+    item_predicate(observed_ratings_df, truth_ratings_df)
+    user_predicate(observed_ratings_df, truth_ratings_df)
+    group_predicate(user_df)
+    constant_predicate()
+    negative_prior()
+    positive_prior()
+    group_member_predicate(user_df)
+    group_1(user_df)
+    group_2(user_df)
+    group1_avg_rating_predicate()
+    group2_avg_rating_predicate()
+    target_predicate(truth_ratings_df)
+    average_item_rating_predicate(observed_ratings_df, truth_ratings_df)
+    average_user_rating_predicate(observed_ratings_df, truth_ratings_df)
+    group_average_item_rating_predicate(user_df, movies_df)
+    group_average_rating_predicate(user_df)
+    group_item_block_predicate(user_df, truth_ratings_df)
+    sim_content_predicate(movies_df)
+    sim_items_predicate(observed_ratings_df, truth_ratings_df, movies)
+    sim_users_predicate(observed_ratings_df, truth_ratings_df, users)
 
 
 def partition_by_timestamp(ratings_df, train_proportion=0.7):
@@ -107,6 +104,9 @@ def filter_dataframes(movies_df, ratings_df, user_df):
     filtered_ratings_df = ratings_df.groupby('userId').filter(lambda x: x.shape[0] > 5)
     # filter ratings by users have dont have demographic information
     filtered_ratings_df = filtered_ratings_df[filtered_ratings_df.userId.isin(user_df.index)]
+
+    # TODO: (Charles) Testing Purposes
+    # filtered_ratings_df = filtered_ratings_df.sample(100)
     return movies_df, filtered_ratings_df, user_df
 
 

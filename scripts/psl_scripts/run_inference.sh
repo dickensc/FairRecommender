@@ -8,7 +8,7 @@ readonly BASE_EXAMPLE_DIR="${THIS_DIR}/../../psl-datasets"
 readonly SUPPORTED_EXAMPLES='movielens'
 
 # Examples that cannot use int ids.
-readonly STRING_IDS='entity-resolution simple-acquaintances user-modeling'
+readonly STRING_IDS='movielens'
 
 # Standard options for all examples and models
 # note that this is assuming that we are only using datasets that have int-ids
@@ -29,6 +29,11 @@ readonly PSL_VERSION='2.3.0-SNAPSHOT'
 function run() {
     local cli_directory=$1
     local model=$2
+
+    echo "${cli_directory}"
+    echo "${model}"
+
+    shift 2
 
     pushd . > /dev/null
         cd "${cli_directory}" || exit

@@ -3,7 +3,7 @@
 # Run all the experiments.
 
 PSL_DATASETS='movielens'
-TUFFY_DATASETS='movielens'
+TUFFY_DATASETS='movielens movielens_non_parity movielens_value'
 
 function main() {
     trap exit SIGINT
@@ -30,6 +30,22 @@ function main() {
         cd "./scripts" || exit
         # shellcheck disable=SC2086
         ./run_fairness_experiments.sh "psl" ${psl_dataset_paths}
+    popd > /dev/null
+
+    # Tuffy Experiments
+     # Initialize Tuffy environment
+     # shellcheck disable=SC2086
+     ./scripts/tuffy_scripts/tuffy_init.sh ${tuffy_dataset_paths}
+
+     # Convert psl formatted data into tuffy formatted data
+     # shellcheck disable=SC2086
+     ./scripts/tuffy_scripts/tuffy_convert.sh ${tuffy_dataset_paths}
+
+    echo "Running tuffy fairness experiments on datasets: [${TUFFY_DATASETS}]."
+    pushd . > /dev/null
+        cd "./scripts" || exit
+        # shellcheck disable=SC2086
+        ./run_fairness_experiments.sh "tuffy" ${tuffy_dataset_paths}
     popd > /dev/null
 }
 

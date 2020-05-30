@@ -3,7 +3,7 @@ import numpy as np
 from helpers import write
 
 
-def sim_content_predicate(movies_df, PSL_DATASET_PATH, fold='0', setting='eval'):
+def sim_content_predicate(movies_df, fold='0', setting='eval'):
     """
     Ratings Predicates
     """

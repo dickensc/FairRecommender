@@ -1,7 +1,7 @@
 from helpers import write
 
 
-def group_member_predicate(user_df, PSL_DATASET_PATH, fold='0', setting='eval'):
+def group_member_predicate(user_df, fold='0', setting='eval'):
     """
     Rated Predicates
     """

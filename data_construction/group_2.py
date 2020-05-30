@@ -1,7 +1,7 @@
 from helpers import write
 
 
-def group_2(user_df, PSL_DATASET_PATH, fold='0', setting='eval'):
+def group_2(user_df, fold='0', setting='eval'):
     """
     """
     group_member_df = user_df.loc[:, ['gender']]

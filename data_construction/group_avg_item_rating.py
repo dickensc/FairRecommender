@@ -1,7 +1,7 @@
 import pandas as pd
 from helpers import write
 
-def group_average_item_rating_predicate(user_df, movies_df, PSL_DATASET_PATH, fold='0', setting='eval'):
+def group_average_item_rating_predicate(user_df, movies_df, fold='0', setting='eval'):
     """
     group_avg_item_rating Predicates
 

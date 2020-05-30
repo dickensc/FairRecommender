@@ -5,7 +5,7 @@ from helpers import query_relevance_cosine_similarity
 from helpers import write
 
 
-def sim_users_predicate(observed_ratings_df, truth_ratings_df, users, PSL_DATASET_PATH, fold='0', setting='eval'):
+def sim_users_predicate(observed_ratings_df, truth_ratings_df, users, fold='0', setting='eval'):
     """
     User Similarity Predicate: sim_cosine_users, built only from observed ratings
     """

@@ -2,7 +2,7 @@ import pandas as pd
 from helpers import write
 
 
-def positive_prior(PSL_DATASET_PATH, fold='0', setting='eval'):
+def positive_prior(fold='0', setting='eval'):
     """
     """
     positive_prior = pd.Series(data=1, index=['c'])

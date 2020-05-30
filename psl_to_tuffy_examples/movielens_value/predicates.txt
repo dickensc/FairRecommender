@@ -1,0 +1,12 @@
+target	2	closed	target_obs.txt	false	false	false	false
+sim_content_items	2	closed	sim_content_items_obs.txt	false	false	false	false
+sim_items	2	closed	sim_items_obs.txt	false	false	false	false
+sim_users	2	closed	sim_users_obs.txt	false	false	false	false
+avg_item_rating	1	closed	avg_item_rating_obs.txt	false	false	false	false
+rated	2	closed	rated_obs.txt	false	false	false	false
+nmf_rating	2	closed	nmf_rating_obs.txt	false	false	false	false
+group_1	1	closed	group_1_obs.txt	false	false	false	false
+group_2	1	closed	group_2_obs.txt	false	false	false	false
+rating	2	open	rating_obs.txt	false	false	false	false
+rating	2	open	rating_targets.txt	0.500	false	false	true
+rating	2	open	rating_truth.txt	false	true	false	false

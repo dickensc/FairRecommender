@@ -1,0 +1,18 @@
+// Similarities like Pearson, Cosine, and Adjusted Cosine Similarity between item ratings.
+1.0 : rated(U,I1) & rated(U,I2) & rating(U,I1) & sim_items(I1,I2) >> rating(U,I2)^2
+1.0 : rated(U,I1) & rated(U,I2) & !rating(U,I1) & sim_items(I1,I2) >> !rating(U,I2)^2
+
+// Similarities like Pearson and Cosine Similarity between user ratings.
+1.0 : rated(U1,I) & rated(U2,I) & rating(U1,I) & sim_users(U1,U2) >> rating(U2,I)^2
+1.0 : rated(U1,I) & rated(U2,I) & !rating(U1,I) & sim_users(U1,U2) >> !rating(U2,I)^2
+
+// Predictions by local nmf predictor
+1.0 : nmf_rating(U, I) & target(U, I) >> rating(U, I)^2
+
+// Average prior of user rating and item ratings.
+//1.0 : rated(U,I) & avg_item_rating(I) >> rating(U,I)^2
+//1.0 : rated(U,I) & rating(U,I) >> avg_item_rating(I)^2
+
+// Content rule by similarity.
+1.0 : rated(U,I1) & rated(U,I2) & rating(U,I1) & sim_content_items(I1,I2) >> rating(U,I2)^2
+1.0 : rated(U,I1) & rated(U,I2) & !rating(U,I1) & sim_content_items(I1,I2) >> !rating(U,I2)^2

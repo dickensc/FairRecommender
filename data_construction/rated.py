@@ -2,7 +2,7 @@ import pandas as pd
 from helpers import write
 
 
-def rated_predicate(observed_ratings_df, truth_ratings_df, PSL_DATASET_PATH, fold='0', setting='eval'):
+def rated_predicate(observed_ratings_df, truth_ratings_df, fold='0', setting='eval'):
     """
     Rated Predicates
     """
