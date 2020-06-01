@@ -135,8 +135,11 @@ function write_uniform_learned_tuffy_file() {
     pushd . > /dev/null
         cd "${example_directory}" || exit
 
+#        # set the weights in the learned file to 1 and write to learned.psl file
+#        sed -r "s/^[0-9]+.[0-9]+ |^[0-9]+ /1.0 /g"  "prog.mln" > "$example_name-learned.mln"
+
         # set the weights in the learned file to 1 and write to learned.psl file
-        sed -r "s/^[0-9]+.[0-9]+ |^[0-9]+ /1.0 /g"  "prog.mln" > "$example_name-learned.mln"
+        cp "prog.mln" "$example_name-learned.mln"
     popd > /dev/null
 }
 

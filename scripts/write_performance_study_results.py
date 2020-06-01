@@ -24,7 +24,10 @@ from evaluators import evaluate_roc_auc_score
 from evaluators import evaluate_non_parity
 from evaluators import evaluate_value
 
-dataset_properties = {'movielens': {'evaluation_predicate': 'rating'}}
+dataset_properties = {'movielens': {'evaluation_predicate': 'rating'},
+'movielens_non_parity': {'evaluation_predicate': 'rating'},
+'movielens_value': {'evaluation_predicate': 'rating'}
+                      }
 
 evaluator_name_to_method = {
     'Categorical': evaluate_accuracy,
@@ -142,6 +145,7 @@ def calculate_experiment_performance(dataset, wl_method, evaluator, folds, model
     experiment_performance = np.array([])
     experiment_fairness = {key: np.array([]) for key in fairness_name_to_evaluator.keys()}
 
+    print(dataset)
     print(model)
 
     for fold in folds:
@@ -155,7 +159,7 @@ def calculate_experiment_performance(dataset, wl_method, evaluator, folds, model
             elif method == 'tuffy':
                 predicted_df = load_tuffy_prediction_frame(dataset, wl_method, evaluator, fold,
                                                            dataset_properties[dataset]['evaluation_predicate'],
-                                                           "performance_study", )
+                                                           "performance_study", model)
             else:
                 raise ValueError("{} not supported. Try: ['psl', 'tuffy']".format(method))
         except FileNotFoundError as err:
