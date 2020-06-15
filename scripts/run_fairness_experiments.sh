@@ -14,14 +14,12 @@ readonly TRACE_LEVEL='TRACE'
 
 declare -A SUPPORTED_DATASETS
 SUPPORTED_DATASETS[psl]='movielens'
-SUPPORTED_DATASETS[tuffy]='movielens movielens_non_parity movielens_value'
 
 declare -A SUPPORTED_FAIRNESS_MODELS
 SUPPORTED_FAIRNESS_MODELS[psl]='base non_parity value'
-SUPPORTED_FAIRNESS_MODELS[tuffy]='base'
 
 # set of currently supported examples
-readonly SUPPORTED_MODEL_TYPES='psl tuffy'
+readonly SUPPORTED_MODEL_TYPES='psl'
 
 # Evaluators to be use for each example
 declare -A DATASET_EVALUATORS
@@ -38,7 +36,6 @@ DATASET_FOLDS[movielens_value]=1
 
 declare -A MODEL_TYPE_TO_FILE_EXTENSION
 MODEL_TYPE_TO_FILE_EXTENSION[psl]="psl"
-MODEL_TYPE_TO_FILE_EXTENSION[tuffy]="mln"
 
 
 function run_example() {
