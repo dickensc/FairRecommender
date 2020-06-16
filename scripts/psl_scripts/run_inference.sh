@@ -28,27 +28,23 @@ readonly PSL_VERSION='2.3.0-SNAPSHOT'
 
 function run() {
     local cli_directory=$1
-    local model=$2
 
     echo "${cli_directory}"
-    echo "${model}"
 
-    shift 2
+    shift 1
 
     pushd . > /dev/null
         cd "${cli_directory}" || exit
-        ./run.sh "$model" "$@"
+        ./run.sh "$@"
     popd > /dev/null
 }
 
 function run_inference() {
     local example_name=$1
-    # TODO: modify run script so phase is considered. Important for wrappers
     local phase=$2
     local fold=$3
     local evaluator=$4
     local out_directory=$5
-    local model=$6
 
     shift 6
 
@@ -68,7 +64,7 @@ function run_inference() {
     set_psl_version "$PSL_VERSION" "$example_directory"
 
     # run evaluation
-    run "${cli_directory}" "${model}" "$@"
+    run "${cli_directory}" "$@"
 
     # modify data files to point back to the 0'th fold
     modify_data_files "$example_directory" 0
@@ -165,8 +161,8 @@ function modify_data_files() {
 }
 
 function main() {
-    if [[ $# -le 5 ]]; then
-        echo "USAGE: $0 <example name> <phase> <fold> <evaluator> <out directory> <model>"
+    if [[ $# -le 4 ]]; then
+        echo "USAGE: $0 <example name> <phase> <fold> <evaluator> <out directory>"
         echo "USAGE: Examples can be among: ${SUPPORTED_EXAMPLES}"
         exit 1
     fi

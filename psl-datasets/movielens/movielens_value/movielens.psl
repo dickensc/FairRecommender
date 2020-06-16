@@ -1,0 +1,43 @@
+// Similarities like Pearson, Cosine, and Adjusted Cosine Similarity between item ratings.
+1.0 : rated(U,I1) & rated(U,I2) & preference(U,I1) & sim_items(I1,I2) >> preference(U,I2)^2
+1.0 : rated(U,I1) & rated(U,I2) & !preference(U,I1) & sim_items(I1,I2) >> !preference(U,I2)^2
+
+// Similarities like Pearson, Cosine, and Adjusted Cosine Similarity between item ratings.
+1.0 : rated(U,I1) & rated(U,I2) & rating(U,I1) & sim_items(I1,I2) >> rating(U,I2)^2
+1.0 : rated(U,I1) & rated(U,I2) & !rating(U,I1) & sim_items(I1,I2) >> !rating(U,I2)^2
+
+// Similarities like Pearson and Cosine Similarity between user ratings.
+1.0 : rated(U1,I) & rated(U2,I) & rating(U1,I) & sim_users(U1,U2) >> rating(U2,I)^2
+1.0 : rated(U1,I) & rated(U2,I) & !rating(U1,I) & sim_users(U1,U2) >> !rating(U2,I)^2
+
+// Predictions by local non-negative matrix factorization and naive bayes predictor
+1.0 : nmf_rating(U, I) & target(U, I) >> rating(U, I)^2
+1.0 : !nmf_rating(U, I) & target(U, I) >> !rating(U, I)^2
+
+1.0 : nb_rating(U, I) & target(U, I) >> rating(U, I)^2
+1.0 : !nb_rating(U, I) & target(U, I) >> !rating(U, I)^2
+
+// Content rule by similarity.
+1.0 : rated(U,I1) & rated(U,I2) & rating(U,I1) & sim_content_items(I1,I2) >> rating(U,I2)^2
+1.0 : rated(U,I1) & rated(U,I2) & !rating(U,I1) & sim_content_items(I1,I2) >> !rating(U,I2)^2
+
+1.0 : rated(U,I1) & rated(U,I2) & rating(U1,I) & sim_demo_users(U1,U2) >> rating(U2,I)^2
+1.0 : rated(U,I1) & rated(U,I2) & !rating(U1,I) & sim_demo_users(U1,U2) >> !rating(U2,I)^2
+
+// Value Unfairness
+// Minimizes the inconsistency in signed estimation error across groups
+// U_val = 1/n \sum_j |(average_predicted_rating_j_g1 - average_true_rating_j_g1 ) -
+//                     (average_predicted_rating_j_g2 - average_true_rating_j_g2 )|
+
+// latent preference assignment for observed set
+rating(U,I) & observed(U,I) >> preference(U,I) .
+preference(U,I) & observed(U,I) >> rating(U,I) .
+rating(U,I) & target(U,I) >> preference(U,I) .
+preference(U,I) & target(U,I) >> rating(U,I) .
+
+// Calculate average group item rating and preference
+preference(+U, I) / @Max[1, |U|] = group_average_item_preference(G, I) . {U: group_member(U, G) & !observed(U, I) & rated(U, I)}
+rating(+U, I) / @Max[1, |U|] = group_average_item_rating(G, I) . {U: group_member(U, G) & validation(U, I)}
+
+// Value unfairness metric
+1.0 : group_average_item_preference(G1, I) - group_average_item_rating(G1, I) = group_average_item_preference(G2, I) - group_average_item_rating(G2, I)

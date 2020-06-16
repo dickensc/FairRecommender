@@ -6,8 +6,12 @@
 1.0 : rated(U1,I) & rated(U2,I) & rating(U1,I) & sim_users(U1,U2) >> rating(U2,I)^2
 1.0 : rated(U1,I) & rated(U2,I) & !rating(U1,I) & sim_users(U1,U2) >> !rating(U2,I)^2
 
-// Predictions by local nmf predictor
+// Predictions by local non-negative matrix factorization and naive bayes predictor
 1.0 : nmf_rating(U, I) & target(U, I) >> rating(U, I)^2
+1.0 : !nmf_rating(U, I) & target(U, I) >> !rating(U, I)^2
+
+1.0 : nb_rating(U, I) & target(U, I) >> rating(U, I)^2
+1.0 : !nb_rating(U, I) & target(U, I) >> !rating(U, I)^2
 
 // Content rule by similarity.
 1.0 : rated(U,I1) & rated(U,I2) & rating(U,I1) & sim_content_items(I1,I2) >> rating(U,I2)^2
@@ -15,3 +19,8 @@
 
 1.0 : rated(U,I1) & rated(U,I2) & rating(U1,I) & sim_demo_users(U1,U2) >> rating(U2,I)^2
 1.0 : rated(U,I1) & rated(U,I2) & !rating(U1,I) & sim_demo_users(U1,U2) >> !rating(U2,I)^2
+
+// Absolute Unfairness
+// Minimizes the inconsistency in absolute estimation error across groups
+// U_abs = 1/n \sum_j ||(average_predicted_rating_j_g1 - average_true_rating_j_g1 )| -
+//                     |(average_predicted_rating_j_g2 - average_true_rating_j_g2 )||

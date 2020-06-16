@@ -3,7 +3,6 @@
 # Run all the experiments.
 
 PSL_DATASETS='movielens'
-TUFFY_DATASETS='movielens movielens_non_parity movielens_value'
 
 function main() {
     trap exit SIGINT

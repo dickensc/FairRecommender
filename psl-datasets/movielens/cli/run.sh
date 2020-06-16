@@ -20,11 +20,6 @@ readonly JAVA_MEM_GB=24
 
 function main() {
    trap exit SIGINT
-   local model=$1
-
-   shift 1
-
-   echo "${model}"
 
    # Get the data
    # getData
@@ -35,7 +30,7 @@ function main() {
 
    # Run PSL
    runWeightLearning "$@"
-   runEvaluation "$model" "$@"
+   runEvaluation "$@"
 }
 
 function getData() {
@@ -58,11 +53,9 @@ function runWeightLearning() {
 }
 
 function runEvaluation() {
-   local model=$1
-   local extra_options=$2
    echo "Running PSL Inference"
 
-   java -Xmx${JAVA_MEM_GB}G -Xms${JAVA_MEM_GB}G -jar "${JAR_PATH}" --model "${BASE_NAME}_${model}-learned.psl" --data "${BASE_NAME}-eval.data" --output inferred-predicates ${ADDITIONAL_EVAL_OPTIONS} ${ADDITIONAL_PSL_OPTIONS} ${extra_options}
+   java -Xmx${JAVA_MEM_GB}G -Xms${JAVA_MEM_GB}G -jar "${JAR_PATH}" --model "${BASE_NAME}-learned.psl" --data "${BASE_NAME}-eval.data" --output inferred-predicates ${ADDITIONAL_EVAL_OPTIONS} ${ADDITIONAL_PSL_OPTIONS} "$@"
    if [[ "$?" -ne 0 ]]; then
       echo 'ERROR: Failed to run infernce'
       exit 70

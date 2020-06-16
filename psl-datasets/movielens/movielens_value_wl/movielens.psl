@@ -1,0 +1,60 @@
+// Similarities like Pearson, Cosine, and Adjusted Cosine Similarity between item ratings.
+1.0 : rated(U,I1) & rated(U,I2) & rating(U,I1) & sim_items(I1,I2) >> rating(U,I2)^2
+1.0 : rated(U,I1) & rated(U,I2) & !rating(U,I1) & sim_items(I1,I2) >> !rating(U,I2)^2
+
+// Similarities like Pearson and Cosine Similarity between user ratings.
+1.0 : rated(U1,I) & rated(U2,I) & rating(U1,I) & sim_users(U1,U2) >> rating(U2,I)^2
+1.0 : rated(U1,I) & rated(U2,I) & !rating(U1,I) & sim_users(U1,U2) >> !rating(U2,I)^2
+
+// Predictions by local non-negative matrix factorization and naive bayes predictor
+1.0 : nmf_rating(U, I) & target(U, I) >> rating(U, I)^2
+1.0 : !nmf_rating(U, I) & target(U, I) >> !rating(U, I)^2
+
+1.0 : nb_rating(U, I) & target(U, I) >> rating(U, I)^2
+1.0 : !nb_rating(U, I) & target(U, I) >> !rating(U, I)^2
+
+// Content rule by similarity.
+1.0 : rated(U,I1) & rated(U,I2) & rating(U,I1) & sim_content_items(I1,I2) >> rating(U,I2)^2
+1.0 : rated(U,I1) & rated(U,I2) & !rating(U,I1) & sim_content_items(I1,I2) >> !rating(U,I2)^2
+
+1.0 : rated(U,I1) & rated(U,I2) & rating(U1,I) & sim_demo_users(U1,U2) >> rating(U2,I)^2
+1.0 : rated(U,I1) & rated(U,I2) & !rating(U1,I) & sim_demo_users(U1,U2) >> !rating(U2,I)^2
+
+// Value Unfairness
+// Minimizes the inconsistency in signed estimation error across groups
+// U_val = 1/n \sum_j |(average_predicted_rating_j_g1 - average_true_rating_j_g1 ) -
+//                     (average_predicted_rating_j_g2 - average_true_rating_j_g2 )|
+// The Value unfairness can be added as a regularization term to the loss function and weight learning
+// can provide weights that would minimize the value unfairness
+
+// Group1 genre specific priors
+1.0 : group_1(U) & target(U,I) & positive_prior(c) & action(I)>> rating(U, I)^2
+1.0 : group_1(U) & target(U,I) & constant(c) & rating(U, I) & action(I) >> negative_prior(c)^2
+
+1.0 : group_1(U) & target(U,I) & positive_prior(c) & romance(I)>> rating(U, I)^2
+1.0 : group_1(U) & target(U,I) & constant(c) & rating(U, I) & romance(I) >> negative_prior(c)^2
+
+1.0 : group_1(U) & target(U,I) & positive_prior(c) & crime(I)>> rating(U, I)^2
+1.0 : group_1(U) & target(U,I) & constant(c) & rating(U, I) & crime(I) >> negative_prior(c)^2
+
+1.0 : group_1(U) & target(U,I) & positive_prior(c) & musical(I)>> rating(U, I)^2
+1.0 : group_1(U) & target(U,I) & constant(c) & rating(U, I) & musical(I) >> negative_prior(c)^2
+
+1.0 : group_1(U) & target(U,I) & positive_prior(c) & scifi(I)>> rating(U, I)^2
+1.0 : group_1(U) & target(U,I) & constant(c) & rating(U, I) & scifi(I) >> negative_prior(c)^2
+
+// Group2 genre specific priors
+1.0 : group_2(U) & target(U,I) & positive_prior(c) & action(I)>> rating(U, I)^2
+1.0 : group_2(U) & target(U,I) & constant(c) & rating(U, I) & action(I) >> negative_prior(c)^2
+
+1.0 : group_2(U) & target(U,I) & positive_prior(c) & romance(I)>> rating(U, I)^2
+1.0 : group_2(U) & target(U,I) & constant(c) & rating(U, I) & romance(I) >> negative_prior(c)^2
+
+1.0 : group_2(U) & target(U,I) & positive_prior(c) & crime(I)>> rating(U, I)^2
+1.0 : group_2(U) & target(U,I) & constant(c) & rating(U, I) & crime(I) >> negative_prior(c)^2
+
+1.0 : group_2(U) & target(U,I) & positive_prior(c) & musical(I)>> rating(U, I)^2
+1.0 : group_2(U) & target(U,I) & constant(c) & rating(U, I) & musical(I) >> negative_prior(c)^2
+
+1.0 : group_2(U) & target(U,I) & positive_prior(c) & scifi(I)>> rating(U, I)^2
+1.0 : group_2(U) & target(U,I) & constant(c) & rating(U, I) & scifi(I) >> negative_prior(c)^2
