@@ -1,16 +1,15 @@
 import pandas as pd
 import numpy as np
+import sys
+sys.path.insert(0, '..')
 from helpers import write
 
 
-def sim_content_predicate(movies_df, fold='0', setting='eval'):
+def sim_content_predicate(movies_df, fold='0', phase='eval'):
     """
     Ratings Predicates
     """
-
-    movie_genres_df = movies_df.loc[:, ["unknown", "Action", "Adventure", "Animation", "Children's", "Comedy", "Crime",
-                                        "Documentary", "Drama", "Fantasy", "Film-Noir", "Horror", "Musical", "Mystery",
-                                        "Romance", "Sci-Fi", "Thriller", "War", "Western"]]
+    movie_genres_df = movies_df.loc[:, ['Action', 'Romance', 'Crime', 'Musical', 'Sci-Fi']]
 
     movie_genres_matrix = movie_genres_df.values
     row_norms = [np.linalg.norm(m) for m in movie_genres_matrix]
@@ -29,4 +28,4 @@ def sim_content_predicate(movies_df, fold='0', setting='eval'):
     item_content_similarity_block_index = pd.MultiIndex.from_arrays([item_index, flattened_frame])
     item_content_similarity_block_series = pd.Series(data=1, index=item_content_similarity_block_index)
 
-    write(item_content_similarity_block_series, 'sim_content_items_obs', fold, setting)
+    write(item_content_similarity_block_series, 'sim_content_items_obs', fold, phase)

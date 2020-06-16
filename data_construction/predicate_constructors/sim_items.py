@@ -1,21 +1,22 @@
 import pandas as pd
 import numpy as np
-
+import sys
+sys.path.insert(0, '..')
 from helpers import query_relevance_cosine_similarity
 from helpers import write
 
 
-def sim_items_predicate(observed_ratings_df, truth_ratings_df, movies, fold='0', setting='eval'):
+def sim_items_predicate(observed_ratings_df, movies, fold='0', phase='eval'):
     """
     Item Similarity Predicate: sim_cosine_items, built only from observed ratings
     """
     item_cosine_similarity_series = query_relevance_cosine_similarity(
-        observed_ratings_df.loc[:, ['userId', 'movieId', 'rating']],
+        observed_ratings_df.loc[:, ['rating']].reset_index(),
         'movieId', 'userId')
 
     # take top 25 for each movie to define pairwise blocks
     item_cosine_similarity_block_frame = pd.DataFrame(index=movies, columns=range(25))
-    for m in observed_ratings_df.movieId.unique():
+    for m in observed_ratings_df.reset_index().movieId.unique():
         item_cosine_similarity_block_frame.loc[m, :] = item_cosine_similarity_series.loc[m].nlargest(25).index
 
     # some movies may not have been rated by any user
@@ -25,4 +26,4 @@ def sim_items_predicate(observed_ratings_df, truth_ratings_df, movies, fold='0',
     item_cosine_similarity_block_index = pd.MultiIndex.from_arrays([item_index, flattened_frame])
     item_cosine_similarity_block_series = pd.Series(data=1, index=item_cosine_similarity_block_index)
 
-    write(item_cosine_similarity_block_series, 'sim_items_obs', fold, setting)
+    write(item_cosine_similarity_block_series, 'sim_items_obs', fold, phase)

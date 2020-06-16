@@ -1,8 +1,9 @@
-import pandas as pd
+import sys
+sys.path.insert(0, '..')
 from helpers import write
 
 
-def target_predicate(truth_ratings_df, fold='0', setting='eval'):
+def target_predicate(truth_ratings_df, partition='obs', fold='0', phase='eval'):
     """
     target Predicates
 
@@ -11,6 +12,6 @@ def target_predicate(truth_ratings_df, fold='0', setting='eval'):
         truth_ratings_df: make use of ratings_predicate and item_predicate
     """
     # truth
-    target_dataframe = truth_ratings_df.loc[:, ['userId', 'movieId']].set_index(['userId', 'movieId'])
+    target_dataframe = truth_ratings_df.loc[:, []]
     target_dataframe['value'] = 1
-    write(target_dataframe, 'target_obs', fold, setting)
+    write(target_dataframe, 'target_' + partition, fold, phase)

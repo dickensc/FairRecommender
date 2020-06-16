@@ -1,7 +1,11 @@
 import pandas as pd
+import sys
+sys.path.insert(0, '..')
+
 from helpers import write
 
-def group_average_item_rating_predicate(user_df, movies_df, fold='0', setting='eval'):
+
+def group_average_item_rating_predicate(user_df, movies_df, fold='0', phase='eval'):
     """
     group_avg_item_rating Predicates
 
@@ -17,4 +21,4 @@ def group_average_item_rating_predicate(user_df, movies_df, fold='0', setting='e
                                                              names=['group', 'movie_id'])
     group_avg_item_rating_dataframe = pd.DataFrame(index=group_avg_item_rating_index, columns=['value'])
     group_avg_item_rating_dataframe.value = 1
-    write(group_avg_item_rating_dataframe, 'group_avg_item_rating_targets', fold, setting)
+    write(group_avg_item_rating_dataframe, 'group_avg_item_rating_targets', fold, phase)

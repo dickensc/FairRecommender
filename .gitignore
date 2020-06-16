@@ -1,8 +1,9 @@
 .DS_store
 
 # data
-ml-100k
-*eval*
+ml-1m
+data
+
 
 # Intellij meta data
 .idea

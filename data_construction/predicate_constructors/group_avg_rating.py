@@ -1,8 +1,11 @@
 import pandas as pd
+import sys
+sys.path.insert(0, '..')
+
 from helpers import write
 
 
-def group_average_rating_predicate(user_df, fold='0', setting='eval'):
+def group_average_rating_predicate(user_df, fold='0', phase='eval'):
     """
     group_average_rating Predicates
 
@@ -16,4 +19,4 @@ def group_average_rating_predicate(user_df, fold='0', setting='eval'):
         equalized to enforce non-parity unfairness
     """
     group_series = pd.Series(data=1, index=user_df.gender.unique())
-    write(group_series, 'group_avg_rating_targets', fold, setting)
+    write(group_series, 'group_avg_rating_targets', fold, phase)

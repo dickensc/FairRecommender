@@ -1,8 +1,11 @@
 import pandas as pd
+import sys
+sys.path.insert(0, '..')
+
 from helpers import write
 
 
-def group_predicate(user_df, fold='0', setting='eval'):
+def group_predicate(user_df, fold='0', phase='eval'):
     """
     group Predicates
 
@@ -11,4 +14,4 @@ def group_predicate(user_df, fold='0', setting='eval'):
     only need user_df
     """
     group_series = pd.Series(data=1, index=user_df.gender.unique())
-    write(group_series, 'group_obs', fold, setting)
+    write(group_series, 'group_obs', fold, phase)
