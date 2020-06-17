@@ -10,6 +10,8 @@ def sim_users_predicate(observed_ratings_df, users, fold='0', phase='eval'):
     """
     User Similarity Predicate: sim_cosine_users, built only from observed ratings
     """
+    # drop users with no ratings, this is unlikely but possible for a fold and split
+    filtered_observed_ratings_df = observed_ratings_df
     user_cosine_similarity_series = query_relevance_cosine_similarity(
         observed_ratings_df.loc[:, ['rating']].reset_index(),
         'userId', 'movieId')

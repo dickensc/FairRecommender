@@ -36,11 +36,11 @@ def query_relevance_cosine_similarity(relevance_df, query_index, item_index, fil
 
 
 def cosine_similarity_frame_from_relevance(data_frame, fill=True):
-    if fill is False:
-        return pairwise_distances(data_frame, metric=cosine_similarity_from_relevance_arrays,
+    if fill:
+        return pairwise_distances(data_frame.fillna(0), metric=cosine_similarity_from_relevance_arrays,
                                   force_all_finite='allow-nan')
     else:
-        return pairwise_distances(data_frame.fillna(0), metric=cosine_similarity_from_relevance_arrays,
+        return pairwise_distances(data_frame, metric=cosine_similarity_from_relevance_arrays,
                                   force_all_finite='allow-nan')
 
 
@@ -75,7 +75,8 @@ def standardize_ratings(observed_ratings_df, truth_ratings_df):
             observed_ratings_series.loc[user, :] = ((observed_ratings_series.loc[user, :] - mean_of_means)
                                                     / (4 * mean_of_stds)) + 0.5
 
-    observed_ratings_series = observed_ratings_series.clip(lower=0, upper=1)
+    # lower bound of 0.1 for ratings to discern between rated and unrated movies
+    observed_ratings_series = observed_ratings_series.clip(lower=0.1, upper=1)
     standardized_observed_ratings_df["rating"] = observed_ratings_series
 
     # truth
@@ -93,7 +94,7 @@ def standardize_ratings(observed_ratings_df, truth_ratings_df):
             truth_ratings_series.loc[user, :] = ((truth_ratings_series.loc[user, :] - mean_of_means)
                                                  / (4 * mean_of_stds)) + 0.5
 
-    truth_ratings_series = truth_ratings_series.clip(lower=0, upper=1)
+    truth_ratings_series = truth_ratings_series.clip(lower=0.1, upper=1)
     standardized_truth_ratings_df.loc[:, "rating"] = truth_ratings_series
 
     return standardized_observed_ratings_df, standardized_truth_ratings_df
