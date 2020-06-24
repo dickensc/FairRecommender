@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import sys
-sys.path.insert(0, '..')
+sys.path.insert(0, '../..')
 from helpers import query_relevance_cosine_similarity
 from helpers import write
 
@@ -10,6 +10,7 @@ def sim_items_predicate(observed_ratings_df, movies, fold='0', phase='eval'):
     """
     Item Similarity Predicate: sim_cosine_items, built only from observed ratings
     """
+    print("Item Similarity Predicate")
     item_cosine_similarity_series = query_relevance_cosine_similarity(
         observed_ratings_df.loc[:, ['rating']].reset_index(),
         'movieId', 'userId')

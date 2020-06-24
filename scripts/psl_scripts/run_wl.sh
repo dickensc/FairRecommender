@@ -69,22 +69,23 @@ EXAMPLE_OPTIONS[lastfm]=''
 function run() {
     local cli_directory=$1
 
+    shift 1
+
     pushd . > /dev/null
         cd "${cli_directory}" || exit
-        ./run.sh
+        ./run.sh "$@"
     popd > /dev/null
 }
 
 function run_weight_learning() {
     local example_name=$1
-    local fold=$2
-    local seed=$3
-    local study=$4
-    local wl_method=$5
-    local evaluator=$6
-    local out_directory=$7
-    local trace_level=$8
-    local model=$9
+    local evaluator=$2
+    local wl_method=$3
+    local fairness_model=$4
+    local fold=$5
+    local out_directory=$6
+
+    shift 6
 
     local example_directory="${BASE_EXAMPLE_DIR}/${example_name}"
     local cli_directory="${example_directory}/cli"
@@ -104,14 +105,20 @@ function run_weight_learning() {
         # modify data files to point to the fold
         modify_data_files "$example_directory" "$fold"
 
+        # modify the model file if necessary for the fairness intervention
+        modify_model_file "$example_directory" "$fairness_model" "$fold"
+
         # set the psl version for WL experiment
         set_psl_version "${WEIGHT_LEARNING_METHOD_PSL_PSL_VERSION[${wl_method}]}" "$example_directory"
 
         # run weight learning
-        run  "${cli_directory}"
+        run  "${cli_directory}" "$@"
 
         # modify data files to point back to the 0'th fold
         modify_data_files "$example_directory" 0
+
+        # Copy the original model file back into the cli directory
+        cp "${BASE_EXAMPLE_DIR}/${example_name}_${fairness_model}/${example_name}.psl" "${cli_directory}/${example_name}.psl"
 
         # reactivate evaluation step in run script
         reactivate_evaluation "$example_directory"
@@ -263,12 +270,34 @@ function modify_data_files() {
     popd > /dev/null
 }
 
+function modify_model_file() {
+    local example_directory=$1
+    local fairness_metric=$2
+    local fold=$3
+
+    local example_name
+    example_name=$(basename "${example_directory}")
+
+    if [[ "${fairness_metric}" == "non_parity" ]]; then
+      pushd . > /dev/null
+          cd "${example_directory}/cli" || exit
+
+          # replace the denominator in the model file with the learn fold specific value
+          local group_1_denominator
+          local group_2_denominator
+          group_1_denominator=$( grep F "../data/${example_name}/${fold}/learn/group_denominators_obs.txt" | cut -f 2 )
+          group_2_denominator=$( grep M "../data/${example_name}/${fold}/learn/group_denominators_obs.txt" | cut -f 2 )
+          sed -i -E "s/DENOMINATOR_1/${group_1_denominator}/g" "${example_name}".psl
+          sed -i -E "s/DENOMINATOR_2/${group_2_denominator}/g" "${example_name}".psl
+      popd > /dev/null
+    fi
+}
+
 function main() {
     trap exit SIGINT
-
     echo "$@"
-    if [[ $# -ne 9 ]]; then
-        echo "USAGE: $0 <example name> <fold> <seed> <study> <wl_method> <evaluator> <outDir> <trace_level> <model>"
+    if [[ $# -le 5 ]]; then
+        echo "USAGE: $0 <example_name> <evaluator> <wl_method> <fairness_model> <fold> <outDir>"
         echo "USAGE: Examples can be among: ${SUPPORTED_EXAMPLES}"
         echo "USAGE: Weight Learning methods can be among: ${SUPPORTED_WL_METHODS}"
         exit 1

@@ -1,15 +1,16 @@
 import pandas as pd
 import numpy as np
 import sys
-sys.path.insert(0, '..')
+sys.path.insert(0, '../..')
 from helpers import write
 
 
 def sim_content_predicate(movies_df, fold='0', phase='eval'):
     """
-    Ratings Predicates
+    Sim item content predicates
     """
-    movie_genres_df = movies_df.loc[:, ['Action', 'Romance', 'Crime', 'Musical', 'Sci-Fi']]
+    print("Sim item content predicates")
+    movie_genres_df = movies_df.drop('movie title', axis=1)
 
     movie_genres_matrix = movie_genres_df.values
     row_norms = [np.linalg.norm(m) for m in movie_genres_matrix]

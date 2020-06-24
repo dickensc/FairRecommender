@@ -1,24 +1,24 @@
-// Similarities like Pearson, Cosine, and Adjusted Cosine Similarity between item ratings.
+// Neighborhood-based collaborative filtering
 1.0 : rated(U,I1) & rated(U,I2) & rating(U,I1) & sim_items(I1,I2) >> rating(U,I2)^2
-1.0 : rated(U,I1) & rated(U,I2) & !rating(U,I1) & sim_items(I1,I2) >> !rating(U,I2)^2
-
-// Similarities like Pearson and Cosine Similarity between user ratings.
 1.0 : rated(U1,I) & rated(U2,I) & rating(U1,I) & sim_users(U1,U2) >> rating(U2,I)^2
-1.0 : rated(U1,I) & rated(U2,I) & !rating(U1,I) & sim_users(U1,U2) >> !rating(U2,I)^2
+
+// Demographic and content based similarity
+1.0 : rated(U,I1) & rated(U,I2) & rating(U,I1) & sim_content_items(I1,I2) >> rating(U,I2)^2
+1.0 : rated(U,I1) & rated(U,I2) & rating(U1,I) & sim_demo_users(U1,U2) >> rating(U2,I)^2
 
 // Predictions by local non-negative matrix factorization and naive bayes predictor
 1.0 : nmf_rating(U, I) & target(U, I) >> rating(U, I)^2
-1.0 : !nmf_rating(U, I) & target(U, I) >> !rating(U, I)^2
+1.0 : rating(U, I) & target(U, I) >> nmf_rating(U, I)^2
 
 1.0 : nb_rating(U, I) & target(U, I) >> rating(U, I)^2
-1.0 : !nb_rating(U, I) & target(U, I) >> !rating(U, I)^2
+1.0 : rating(U, I) & target(U, I) >> nb_rating(U, I)^2
 
-// Content rule by similarity.
-1.0 : rated(U,I1) & rated(U,I2) & rating(U,I1) & sim_content_items(I1,I2) >> rating(U,I2)^2
-1.0 : rated(U,I1) & rated(U,I2) & !rating(U,I1) & sim_content_items(I1,I2) >> !rating(U,I2)^2
+// Mean-Centering
+1.0 : avg_user_rating(U) & target(U,I) >> rating(U, I)^2
+1.0 : rating(U) & target(U,I) >> avg_user_rating(U, I)^2
 
-1.0 : rated(U,I1) & rated(U,I2) & rating(U1,I) & sim_demo_users(U1,U2) >> rating(U2,I)^2
-1.0 : rated(U,I1) & rated(U,I2) & !rating(U1,I) & sim_demo_users(U1,U2) >> !rating(U2,I)^2
+1.0 : avg_item_rating(I) & target(U,I) >> rating(U, I)^2
+1.0 : rating(I) & target(U,I) >> avg_item_rating(U, I)^2
 
 // Underestimation Unfairness
 // Minimizes the inconsistency in underestimation of true ratings across groups

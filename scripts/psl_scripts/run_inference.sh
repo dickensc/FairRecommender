@@ -29,8 +29,6 @@ readonly PSL_VERSION='2.3.0-SNAPSHOT'
 function run() {
     local cli_directory=$1
 
-    echo "${cli_directory}"
-
     shift 1
 
     pushd . > /dev/null
@@ -41,12 +39,12 @@ function run() {
 
 function run_inference() {
     local example_name=$1
-    local phase=$2
-    local fold=$3
-    local evaluator=$4
+    local evaluator=$2
+    local fairness_model=$3
+    local fold=$4
     local out_directory=$5
 
-    shift 6
+    shift 5
 
     local example_directory="${BASE_EXAMPLE_DIR}/${example_name}"
     local cli_directory="${example_directory}/cli"
@@ -60,6 +58,9 @@ function run_inference() {
     # modify data files to point to the fold
     modify_data_files "$example_directory" "$fold"
 
+    # modify the model file if necessary for the fairness intervention
+    modify_model_file "$example_directory" "$fairness_model" "$fold"
+
     # set the psl version for WL experiment
     set_psl_version "$PSL_VERSION" "$example_directory"
 
@@ -68,6 +69,9 @@ function run_inference() {
 
     # modify data files to point back to the 0'th fold
     modify_data_files "$example_directory" 0
+
+    # Copy the original model file back into the cli directory
+    cp "${BASE_EXAMPLE_DIR}/${example_name}_${fairness_model}/${example_name}.psl" "${cli_directory}/${example_name}.psl"
 
     # reactivate weight learning step in run script
     reactivate_weight_learning "$example_directory"
@@ -160,9 +164,32 @@ function modify_data_files() {
     popd > /dev/null
 }
 
+function modify_model_file() {
+    local example_directory=$1
+    local fairness_metric=$2
+    local fold=$3
+
+    local example_name
+    example_name=$(basename "${example_directory}")
+
+    if [[ "${fairness_metric}" == "non_parity" ]]; then
+      pushd . > /dev/null
+          cd "${example_directory}/cli" || exit
+
+          # replace the denominator in the model file with the learn fold specific value
+          local group_1_denominator
+          local group_2_denominator
+          group_1_denominator=$( grep F "../data/${example_name}/${fold}/eval/group_denominators_obs.txt" | cut -f 2 )
+          group_2_denominator=$( grep M "../data/${example_name}/${fold}/eval/group_denominators_obs.txt" | cut -f 2 )
+          sed -i -E "s/DENOMINATOR_1/${group_1_denominator}/g" "${example_name}".psl
+          sed -i -E "s/DENOMINATOR_2/${group_2_denominator}/g" "${example_name}".psl
+      popd > /dev/null
+    fi
+}
+
 function main() {
     if [[ $# -le 4 ]]; then
-        echo "USAGE: $0 <example name> <phase> <fold> <evaluator> <out directory>"
+        echo "USAGE: $0 <example_name> <evaluator> <fairness_model> <fold> <out_directory>"
         echo "USAGE: Examples can be among: ${SUPPORTED_EXAMPLES}"
         exit 1
     fi

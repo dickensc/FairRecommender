@@ -47,7 +47,7 @@ function run_example() {
     setup_fairness_experiment "${example_directory}" "${fairness_model}" "${cli_directory}"
 
     ##### WEIGHT LEARNING #####
-    run_weight_learning "${example_name}" "${evaluator}" "${wl_method}" "${fairness_model}" "${fold}" "${cli_directory}" "${out_directory}"
+    run_weight_learning "${example_name}" "${evaluator}" "${wl_method}" "${fairness_model}" "${fold}" "${out_directory}"
 
     ##### EVALUATION #####
     run_evaluation "${example_name}" "${evaluator}" "${fairness_model}" "${fold}" "${out_directory}"

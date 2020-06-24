@@ -1,33 +1,40 @@
 import pandas as pd
 import numpy as np
 import os
+
 from helpers import standardize_ratings
-from predicate_constructors.ratings import ratings_predicate
-from predicate_constructors.nmf_ratings import nmf_ratings_predicate
-from predicate_constructors.rated import rated_predicate
-from predicate_constructors.item import item_predicate
-from predicate_constructors.user import user_predicate
-from predicate_constructors.avg_item_rating import average_item_rating_predicate
-from predicate_constructors.avg_user_rating import average_user_rating_predicate
-from predicate_constructors.sim_content import sim_content_predicate
-from predicate_constructors.sim_items import sim_items_predicate
-from predicate_constructors.sim_users import sim_users_predicate
-from predicate_constructors.group import group_predicate
-from predicate_constructors.group_1_avg_rating import group1_avg_rating_predicate
-from predicate_constructors.group_2_avg_rating import group2_avg_rating_predicate
-from predicate_constructors.constant import constant_predicate
-from predicate_constructors.group_1 import group_1
-from predicate_constructors.group_2 import group_2
-from predicate_constructors.negative_prior import negative_prior
-from predicate_constructors.positive_prior import positive_prior
-from predicate_constructors.group_member import group_member_predicate
-from predicate_constructors.target import target_predicate
-from predicate_constructors.group_avg_item_rating import group_average_item_rating_predicate
-from predicate_constructors.group_avg_rating import group_average_rating_predicate
-from predicate_constructors.group_item_block import group_item_block_predicate
+
+from predicate_constructors.base_model_predicates.ratings import ratings_predicate
+from predicate_constructors.base_model_predicates.rated import rated_predicate
+from predicate_constructors.base_model_predicates.item import item_predicate
+from predicate_constructors.base_model_predicates.user import user_predicate
+from predicate_constructors.base_model_predicates.avg_item_rating import average_item_rating_predicate
+from predicate_constructors.base_model_predicates.avg_user_rating import average_user_rating_predicate
+from predicate_constructors.base_model_predicates.sim_content import sim_content_predicate
+from predicate_constructors.base_model_predicates.sim_demo_users import sim_demo_users_predicate
+from predicate_constructors.base_model_predicates.sim_items import sim_items_predicate
+from predicate_constructors.base_model_predicates.sim_users import sim_users_predicate
+from predicate_constructors.base_model_predicates.target import target_predicate
+from predicate_constructors.base_model_predicates.nmf_ratings import nmf_ratings_predicate
+from predicate_constructors.base_model_predicates.nb_ratings import nb_ratings_predicate
+
+from predicate_constructors.fairness_predicates.group import group_predicate
+from predicate_constructors.fairness_predicates.group_1_avg_rating import group1_avg_rating_predicate
+from predicate_constructors.fairness_predicates.group_2_avg_rating import group2_avg_rating_predicate
+from predicate_constructors.fairness_predicates.constant import constant_predicate
+from predicate_constructors.fairness_predicates.group_1 import group_1
+from predicate_constructors.fairness_predicates.group_2 import group_2
+from predicate_constructors.fairness_predicates.negative_prior import negative_prior
+from predicate_constructors.fairness_predicates.positive_prior import positive_prior
+from predicate_constructors.fairness_predicates.group_member import group_member_predicate
+from predicate_constructors.fairness_predicates.group_avg_item_rating import group_average_item_rating_predicate
+from predicate_constructors.fairness_predicates.group_avg_rating import group_average_rating_predicate
+from predicate_constructors.fairness_predicates.group_item_block import group_item_block_predicate
+from predicate_constructors.fairness_predicates.group_denominator import group_denominators
 
 DATA_PATH = "../psl-datasets/movielens/data"
 N_FOLDS = 5
+
 
 def construct_movielens_predicates():
     """
@@ -45,21 +52,34 @@ def construct_movielens_predicates():
     movies_df, ratings_df, user_df = load_dataframes()
     movies_df, ratings_df, user_df = filter_dataframes(movies_df, ratings_df, user_df)
     # note that truth and target will have the same atoms
-    observed_ratings_df_list, train_ratings_df_list, test_ratings_df_list = partition_by_timestamp(ratings_df, N_FOLDS)
+    # observed_ratings_df_list, train_ratings_df_list, test_ratings_df_list = partition_by_timestamp(ratings_df, N_FOLDS)
+    observed_ratings_df_list, train_ratings_df_list, test_ratings_df_list = partition_randomly(ratings_df, N_FOLDS)
 
     for fold, (observed_ratings_df, train_ratings_df, test_ratings_df) in \
             enumerate(zip(observed_ratings_df_list, train_ratings_df_list, test_ratings_df_list)):
 
+        # Standardized
+        # # Learn
+        # standardized_observed_ratings_df, standardized_truth_ratings_df = standardize_ratings(observed_ratings_df,
+        #                                                                                       train_ratings_df)
+        # write_predicates(standardized_observed_ratings_df, standardized_truth_ratings_df,
+        #                  user_df, movies_df, 'learn', fold)
+        #
+        # # Eval
+        # standardized_observed_ratings_df, standardized_truth_ratings_df = standardize_ratings(
+        #     observed_ratings_df.append(train_ratings_df, verify_integrity=True), test_ratings_df)
+        # write_predicates(standardized_observed_ratings_df, standardized_truth_ratings_df,
+        #                  user_df, movies_df, 'eval', fold)
+
+        # Un-standardized
+        print("Fold: {} train predicates".format(fold))
         # Learn
-        standardized_observed_ratings_df, standardized_truth_ratings_df = standardize_ratings(observed_ratings_df,
-                                                                                              train_ratings_df)
-        write_predicates(standardized_observed_ratings_df, standardized_truth_ratings_df,
+        write_predicates(observed_ratings_df, train_ratings_df,
                          user_df, movies_df, 'learn', fold)
 
+        print("Fold: {} eval predicates".format(fold))
         # Eval
-        standardized_observed_ratings_df, standardized_truth_ratings_df = standardize_ratings(
-            observed_ratings_df.append(train_ratings_df, verify_integrity=True), test_ratings_df)
-        write_predicates(standardized_observed_ratings_df, standardized_truth_ratings_df,
+        write_predicates(observed_ratings_df.append(train_ratings_df, verify_integrity=True), test_ratings_df,
                          user_df, movies_df, 'eval', fold)
 
 
@@ -77,11 +97,13 @@ def write_predicates(observed_ratings_df, truth_ratings_df, user_df, movies_df, 
     ratings_predicate(truth_ratings_df, partition='truth', fold=str(fold), phase=phase, write_value=False)
 
     nmf_ratings_predicate(observed_ratings_df, truth_ratings_df, fold=str(fold), phase=phase)
+    nb_ratings_predicate(observed_ratings_df, truth_ratings_df, user_df, movies_df, fold=str(fold), phase=phase)
 
     average_item_rating_predicate(observed_ratings_df, fold=str(fold), phase=phase)
     average_user_rating_predicate(observed_ratings_df, fold=str(fold), phase=phase)
 
     sim_content_predicate(movies_df, fold=str(fold), phase=phase)
+    sim_demo_users_predicate(user_df, fold=str(fold), phase=phase)
     sim_items_predicate(observed_ratings_df, movies, fold=str(fold), phase=phase)
     sim_users_predicate(observed_ratings_df, users, fold=str(fold), phase=phase)
 
@@ -100,9 +122,30 @@ def write_predicates(observed_ratings_df, truth_ratings_df, user_df, movies_df, 
     group_2(user_df, fold=str(fold), phase=phase)
     group1_avg_rating_predicate(fold=str(fold), phase=phase)
     group2_avg_rating_predicate(fold=str(fold), phase=phase)
-    group_average_item_rating_predicate(user_df, movies_df, fold=str(fold), phase=phase)
+    group_average_item_rating_predicate(observed_ratings_df, user_df, movies_df, fold=str(fold), phase=phase)
     group_average_rating_predicate(user_df, fold=str(fold), phase=phase)
     group_item_block_predicate(user_df, truth_ratings_df, fold=str(fold), phase=phase)
+    group_denominators(user_df, truth_ratings_df, fold=str(fold), phase=phase)
+
+
+def partition_randomly(ratings_df, n_folds, train_proportion=0.7):
+    observed_ratings_df_list = []
+    train_ratings_df_list = []
+    test_ratings_df_list = []
+    for fold_ratings_df in [ratings_df.sample(frac=1, random_state=i) for i in np.arange(n_folds)]:
+        # train test split
+        learn_split_ratings_df = fold_ratings_df.iloc[: int(fold_ratings_df.shape[0] * train_proportion), :]
+        test_split_ratings_df = fold_ratings_df.iloc[int(fold_ratings_df.shape[0] * train_proportion):, :]
+
+        # observed train split
+        observed_split_ratings_df = learn_split_ratings_df.iloc[: int(learn_split_ratings_df.shape[0] * train_proportion), :]
+        train_split_ratings_df = learn_split_ratings_df.iloc[int(learn_split_ratings_df.shape[0] * train_proportion):, :]
+
+        observed_ratings_df_list.append(observed_split_ratings_df)
+        train_ratings_df_list.append(train_split_ratings_df)
+        test_ratings_df_list.append(test_split_ratings_df)
+
+    return observed_ratings_df_list, train_ratings_df_list, test_ratings_df_list
 
 
 def partition_by_timestamp(ratings_df, n_folds, train_proportion=0.7):
@@ -148,9 +191,8 @@ def filter_dataframes(movies_df, ratings_df, user_df, n=50, genres=None):
         genres = ['Action', 'Romance', 'Crime', 'Musical', 'Sci-Fi']
 
     # filter movies and ratings outside of the genres
-    filtered_movies_df = movies_df[movies_df[genres].sum(axis=1) > 1]
+    filtered_movies_df = movies_df[movies_df[genres].sum(axis=1) >= 1]
     filtered_ratings_df = ratings_df.reindex(filtered_movies_df.index, level='movieId').dropna(axis='index')
-
 
     # filter users that have less than n ratings
     filtered_ratings_df = filtered_ratings_df.groupby('userId').filter(lambda x: x.shape[0] > n)

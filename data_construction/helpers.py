@@ -37,7 +37,7 @@ def query_relevance_cosine_similarity(relevance_df, query_index, item_index, fil
 
 def cosine_similarity_frame_from_relevance(data_frame, fill=True):
     if fill:
-        return pairwise_distances(data_frame.fillna(0), metric=cosine_similarity_from_relevance_arrays,
+        return pairwise_distances(data_frame.fillna(0), metric='cosine',
                                   force_all_finite='allow-nan')
     else:
         return pairwise_distances(data_frame, metric=cosine_similarity_from_relevance_arrays,

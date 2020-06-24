@@ -1,7 +1,7 @@
 from helpers import write
 from sklearn.decomposition import NMF
 import sys
-sys.path.insert(0, '..')
+sys.path.insert(0, '../..')
 import pandas as pd
 
 
@@ -9,7 +9,7 @@ def nmf_ratings_predicate(observed_ratings_df, truth_ratings_df, fold='0', phase
     """
     nmf_ratings Predicates
     """
-
+    print("NMF predicates")
     nmf_model = NMF(n_components=50)
     observed_user_item_matrix = observed_ratings_df.loc[:, 'rating'].unstack(fill_value=0.5)
     truth_user_item_matrix = truth_ratings_df.loc[:, 'rating'].unstack()
