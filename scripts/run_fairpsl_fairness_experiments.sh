@@ -19,12 +19,6 @@ readonly SUPPORTED_DATASETS='movielens'
 declare -A DATASET_EVALUATORS
 DATASET_EVALUATORS[movielens]='Continuous'
 
-# Weight support by fairness model
-declare -A SUPPORTED_FAIR_WEIGHTS
-SUPPORTED_FAIR_WEIGHTS[base]='0.001'
-SUPPORTED_FAIR_WEIGHTS[non_parity]='0.001 0.01 0.1 1.0 10.0'
-SUPPORTED_FAIR_WEIGHTS[value]='0.001 0.01 0.1 1.0 10.0'
-
 # Evaluators to be use for each example
 # todo: (Charles D.) just read this information from psl example data directory rather than hardcoding
 declare -A DATASET_FOLDS
