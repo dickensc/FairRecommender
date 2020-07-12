@@ -7,10 +7,10 @@ readonly BASE_DIR=$(realpath "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 readonly PSL_DATASET_DIR="${BASE_DIR}/psl-datasets"
 
-#readonly AVAILABLE_MEM_KB=$(cat /proc/meminfo | grep 'MemTotal' | sed 's/^[^0-9]\+\([0-9]\+\)[^0-9]\+$/\1/')
-## Floor by multiples of 5 and then reserve an additional 5 GB.
-#readonly JAVA_MEM_GB=$((${AVAILABLE_MEM_KB} / 1024 / 1024 / 5 * 5 - 5))
-readonly JAVA_MEM_GB=24
+readonly AVAILABLE_MEM_KB=$(cat /proc/meminfo | grep 'MemTotal' | sed 's/^[^0-9]\+\([0-9]\+\)[^0-9]\+$/\1/')
+# Floor by multiples of 5 and then reserve an additional 5 GB.
+readonly JAVA_MEM_GB=$((${AVAILABLE_MEM_KB} / 1024 / 1024 / 5 * 5 - 5))
+#readonly JAVA_MEM_GB=24
 
 
 # Common to all examples.
@@ -28,6 +28,12 @@ function standard_fixes() {
             # TODO: (Charles) For now until data construction is complete and we host the
             #       final version of the data on the linqs server
             sed -i 's/^\(\s\+\)getData/\1# getData/' run.sh
+
+            # cp 2.3.0 snapshot into the cli directory
+            cp ../../../psl_resources/psl-cli-2.3.0-SNAPSHOT.jar ./
+
+            # Deactivate fetch psl step
+            sed -i 's/^\(\s\+\)fetch_psl/\1# fetch_psl/' run.sh
 
         popd > /dev/null
 

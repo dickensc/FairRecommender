@@ -14,3 +14,4 @@ data
 results
 
 *.jar
+!psl_resources/psl-cli-2.3.0-SNAPSHOT.jar
