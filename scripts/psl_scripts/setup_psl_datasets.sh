@@ -29,10 +29,6 @@ function standard_fixes() {
             #       final version of the data on the linqs server
             sed -i 's/^\(\s\+\)getData/\1# getData/' run.sh
 
-            # Deactivate weight learning psl step
-            # TODO: (Charles) For now until we make splits
-            sed -i 's/^\(\s\+\)runWeightLearning/\1# runWeightLearning/' run.sh
-
         popd > /dev/null
 
     done

@@ -16,14 +16,19 @@ from predicate_constructors.base_model_predicates.sim_items import sim_items_pre
 from predicate_constructors.base_model_predicates.sim_users import sim_users_predicate
 from predicate_constructors.base_model_predicates.target import target_predicate
 from predicate_constructors.base_model_predicates.nmf_ratings import nmf_ratings_predicate
+from predicate_constructors.base_model_predicates.svd_ratings import svd_ratings_predicate
 from predicate_constructors.base_model_predicates.nb_ratings import nb_ratings_predicate
 
 from predicate_constructors.fairness_predicates.group import group_predicate
 from predicate_constructors.fairness_predicates.group_1_avg_rating import group1_avg_rating_predicate
 from predicate_constructors.fairness_predicates.group_2_avg_rating import group2_avg_rating_predicate
-from predicate_constructors.fairness_predicates.constant import constant_predicate
+from predicate_constructors.fairness_predicates.group_1_item_rating import group1_item_rating_predicate
+from predicate_constructors.fairness_predicates.group_2_item_rating import group2_item_rating_predicate
+from predicate_constructors.fairness_predicates.group_1_genre_rating import group1_genre_rating_predicate
+from predicate_constructors.fairness_predicates.group_2_genre_rating import group2_genre_rating_predicate
 from predicate_constructors.fairness_predicates.group_1 import group_1
 from predicate_constructors.fairness_predicates.group_2 import group_2
+from predicate_constructors.fairness_predicates.is_genre import is_genre_predicate
 from predicate_constructors.fairness_predicates.negative_prior import negative_prior
 from predicate_constructors.fairness_predicates.positive_prior import positive_prior
 from predicate_constructors.fairness_predicates.group_member import group_member_predicate
@@ -31,6 +36,10 @@ from predicate_constructors.fairness_predicates.group_avg_item_rating import gro
 from predicate_constructors.fairness_predicates.group_avg_rating import group_average_rating_predicate
 from predicate_constructors.fairness_predicates.group_item_block import group_item_block_predicate
 from predicate_constructors.fairness_predicates.group_denominator import group_denominators
+from predicate_constructors.fairness_predicates.constant import constant_predicate
+
+from predicate_constructors.mf_predicates.group_member import group_member_mf
+from predicate_constructors.mf_predicates.ratings import ratings_mf
 
 DATA_PATH = "../psl-datasets/movielens/data"
 N_FOLDS = 5
@@ -59,17 +68,17 @@ def construct_movielens_predicates():
             enumerate(zip(observed_ratings_df_list, train_ratings_df_list, test_ratings_df_list)):
 
         # Standardized
-        # # Learn
-        # standardized_observed_ratings_df, standardized_truth_ratings_df = standardize_ratings(observed_ratings_df,
-        #                                                                                       train_ratings_df)
-        # write_predicates(standardized_observed_ratings_df, standardized_truth_ratings_df,
-        #                  user_df, movies_df, 'learn', fold)
-        #
-        # # Eval
-        # standardized_observed_ratings_df, standardized_truth_ratings_df = standardize_ratings(
-        #     observed_ratings_df.append(train_ratings_df, verify_integrity=True), test_ratings_df)
-        # write_predicates(standardized_observed_ratings_df, standardized_truth_ratings_df,
-        #                  user_df, movies_df, 'eval', fold)
+        # Learn
+        standardized_observed_ratings_df, standardized_truth_ratings_df = standardize_ratings(observed_ratings_df,
+                                                                                              train_ratings_df)
+        write_predicates(standardized_observed_ratings_df, standardized_truth_ratings_df,
+                         user_df, movies_df, 'learn', fold)
+
+        # Eval
+        standardized_observed_ratings_df, standardized_truth_ratings_df = standardize_ratings(
+            observed_ratings_df.append(train_ratings_df, verify_integrity=True), test_ratings_df)
+        write_predicates(standardized_observed_ratings_df, standardized_truth_ratings_df,
+                         user_df, movies_df, 'eval', fold)
 
         # Un-standardized
         print("Fold: {} train predicates".format(fold))
@@ -94,9 +103,10 @@ def write_predicates(observed_ratings_df, truth_ratings_df, user_df, movies_df, 
     # Base model predicates
     ratings_predicate(observed_ratings_df, partition='obs', fold=str(fold), phase=phase)
     ratings_predicate(truth_ratings_df, partition='targets', fold=str(fold), phase=phase, write_value=False)
-    ratings_predicate(truth_ratings_df, partition='truth', fold=str(fold), phase=phase, write_value=False)
+    ratings_predicate(truth_ratings_df, partition='truth', fold=str(fold), phase=phase, write_value=True)
 
     nmf_ratings_predicate(observed_ratings_df, truth_ratings_df, fold=str(fold), phase=phase)
+    svd_ratings_predicate(observed_ratings_df, truth_ratings_df, fold=str(fold), phase=phase)
     nb_ratings_predicate(observed_ratings_df, truth_ratings_df, user_df, movies_df, fold=str(fold), phase=phase)
 
     average_item_rating_predicate(observed_ratings_df, fold=str(fold), phase=phase)
@@ -126,6 +136,18 @@ def write_predicates(observed_ratings_df, truth_ratings_df, user_df, movies_df, 
     group_average_rating_predicate(user_df, fold=str(fold), phase=phase)
     group_item_block_predicate(user_df, truth_ratings_df, fold=str(fold), phase=phase)
     group_denominators(user_df, truth_ratings_df, fold=str(fold), phase=phase)
+
+    # fair psl predicates
+    group1_item_rating_predicate(movies_df, fold=str(fold), phase=phase)
+    group2_item_rating_predicate(movies_df, fold=str(fold), phase=phase)
+    group1_genre_rating_predicate(movies_df, fold=str(fold), phase=phase)
+    group2_genre_rating_predicate(movies_df, fold=str(fold), phase=phase)
+    is_genre_predicate(movies_df, fold=str(fold), phase=phase)
+
+    # Matrix factorization predicates
+    group_member_mf(user_df, fold=str(fold), phase=phase)
+    ratings_mf(observed_ratings_df, partition='obs', fold=str(fold), phase=phase)
+    ratings_mf(truth_ratings_df, partition='truth', fold=str(fold), phase=phase)
 
 
 def partition_randomly(ratings_df, n_folds, train_proportion=0.7):

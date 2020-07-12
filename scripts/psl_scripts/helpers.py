@@ -23,14 +23,13 @@ def write_learned_weights(weights):
     pass
 
 
-def load_prediction_frame(dataset, wl_method, evaluation_metric, fold, predicate, study, model):
+def load_prediction_frame(predicted_path):
     # path to this file relative to caller
     dirname = os.path.dirname(__file__)
 
     # predicted dataframe
-    predicted_path = "{}/../../results/fairness/psl/{}/{}/{}/{}/{}/{}/inferred-predicates/{}.txt".format(
-        dirname, study, dataset, wl_method, evaluation_metric, fold, model, predicate.upper())
-    print(predicted_path)
+    predicted_path = "{}/../../{}".format(dirname, predicted_path)
+
     predicted_df = pd.read_csv(predicted_path, sep='\t', header=None)
 
     # clean up column names and set multi-index for predicate

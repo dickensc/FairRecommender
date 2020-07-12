@@ -8,13 +8,13 @@ readonly BASE_EXAMPLE_DIR="${THIS_DIR}/../../psl-datasets"
 readonly SUPPORTED_EXAMPLES='movielens'
 
 # Examples that cannot use int ids.
-readonly STRING_IDS='movielens'
+readonly STRING_IDS=''
 
 # Standard options for all examples and models
 # note that this is assuming that we are only using datasets that have int-ids
 # todo: (Charles D.) break this assumption
 readonly POSTGRES_DB='psl'
-readonly STANDARD_PSL_OPTIONS="--postgres ${POSTGRES_DB} -D admmreasoner.initialconsensusvalue=ZERO -D log4j.threshold=TRACE"
+readonly STANDARD_PSL_OPTIONS="--postgres ${POSTGRES_DB} -D log4j.threshold=TRACE"
 
 # Options specific to each example (missing keys yield empty strings).
 declare -A EXAMPLE_OPTIONS
@@ -52,6 +52,9 @@ function run_inference() {
     # deactivate weight learning step in run script
     deactivate_weight_learning "$example_directory"
 
+    # reactivate evaluation step in run script
+    reactivate_evaluation "$example_directory"
+
     # modify runscript to run with the options for this study
     modify_run_script_options "$example_directory" "$evaluator"
 
@@ -71,7 +74,7 @@ function run_inference() {
     modify_data_files "$example_directory" 0
 
     # Copy the original model file back into the cli directory
-    cp "${BASE_EXAMPLE_DIR}/${example_name}_${fairness_model}/${example_name}.psl" "${cli_directory}/${example_name}.psl"
+    cp "${BASE_EXAMPLE_DIR}/${example_name}/${example_name}_${fairness_model}/${example_name}.psl" "${cli_directory}/${example_name}.psl"
 
     # reactivate weight learning step in run script
     reactivate_weight_learning "$example_directory"
@@ -80,6 +83,21 @@ function run_inference() {
     mv "${cli_directory}/inferred-predicates" "${out_directory}/inferred-predicates"
 
     return 0
+}
+
+function reactivate_evaluation() {
+    local example_directory=$1
+    local example_name
+    example_name=$(basename "${example_directory}")
+
+    # reactivate evaluation step in run script
+    pushd . > /dev/null
+        cd "${example_directory}/cli" || exit
+
+        # reactivate evaluation.
+        sed -i 's/^\(\s\+\)# runEvaluation/\1runEvaluation/' run.sh
+
+    popd > /dev/null
 }
 
 function set_psl_version() {
@@ -145,6 +163,7 @@ function modify_run_script_options() {
         sed -i "s/^readonly ADDITIONAL_PSL_OPTIONS='.*'$/readonly ADDITIONAL_PSL_OPTIONS='${int_ids_options} ${STANDARD_PSL_OPTIONS}'/" run.sh
 
         # set the ADDITIONAL_EVAL_OPTIONS
+#        sed -i "s/^readonly ADDITIONAL_EVAL_OPTIONS='.*'$/readonly ADDITIONAL_EVAL_OPTIONS='--infer=SGDInference --eval org.linqs.psl.evaluation.statistics.${objective}Evaluator ${EXAMPLE_OPTIONS[${example_name}]}'/" run.sh
         sed -i "s/^readonly ADDITIONAL_EVAL_OPTIONS='.*'$/readonly ADDITIONAL_EVAL_OPTIONS='--infer --eval org.linqs.psl.evaluation.statistics.${objective}Evaluator ${EXAMPLE_OPTIONS[${example_name}]}'/" run.sh
     popd > /dev/null
 }
@@ -181,8 +200,8 @@ function modify_model_file() {
           local group_2_denominator
           group_1_denominator=$( grep F "../data/${example_name}/${fold}/eval/group_denominators_obs.txt" | cut -f 2 )
           group_2_denominator=$( grep M "../data/${example_name}/${fold}/eval/group_denominators_obs.txt" | cut -f 2 )
-          sed -i -E "s/DENOMINATOR_1/${group_1_denominator}/g" "${example_name}".psl
-          sed -i -E "s/DENOMINATOR_2/${group_2_denominator}/g" "${example_name}".psl
+          sed -i -E "s/DENOMINATOR_1/${group_1_denominator}/g" "${example_name}"-learned.psl
+          sed -i -E "s/DENOMINATOR_2/${group_2_denominator}/g" "${example_name}"-learned.psl
       popd > /dev/null
     fi
 }

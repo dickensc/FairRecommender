@@ -1,0 +1,39 @@
+// Neighborhood-based collaborative filtering
+1.0 : rated(U,I1) & rated(U,I2) & rating(U,I1) & sim_items(I1,I2) >> rating(U,I2)^2
+1.0 : rated(U1,I) & rated(U2,I) & rating(U1,I) & sim_users(U1,U2) >> rating(U2,I)^2
+
+// Demographic and content based similarity
+1.0 : rated(U,I1) & rated(U,I2) & rating(U,I1) & sim_content_items(I1,I2) >> rating(U,I2)^2
+1.0 : rated(U1,I) & rated(U2,I) & rating(U1,I) & sim_demo_users(U1,U2) >> rating(U2,I)^2
+
+// Predictions by local non-negative matrix factorization and naive bayes predictor
+1.0 : nmf_rating(U, I) & target(U, I) >> rating(U, I)^2
+1.0 : rating(U, I) & target(U, I) >> nmf_rating(U, I)^2
+
+1.0 : svd_rating(U, I) & target(U, I) >> rating(U, I)^2
+1.0 : rating(U, I) & target(U, I) >> svd_rating(U, I)^2
+
+1.0 : nb_rating(U, I) & target(U, I) >> rating(U, I)^2
+1.0 : rating(U, I) & target(U, I) >> nb_rating(U, I)^2
+
+// Mean-Centering
+1.0 : avg_user_rating(U) & target(U,I) >> rating(U, I)^2
+1.0 : rating(U, I) & target(U,I) >> avg_user_rating(U)^2
+
+1.0 : avg_item_rating(I) & target(U,I) >> rating(U, I)^2
+1.0 : rating(U, I) & target(U,I) >> avg_item_rating(I)^2
+
+// Priors
+1.0 : rating(U, I) = 1.0 ^2
+1.0 : ~rating(U, I) ^2
+
+// Fairness Intervention
+1.0 : rating(U, I) & is_genre(I, G) & group_1(U) >> group1_genre_rating(G)
+1.0 : rating(U, I) & is_genre(I, G) & group_2(U) >> group2_genre_rating(G)
+1.0 : group1_genre_rating(G) >> group2_genre_rating(G)
+1.0 : group2_genre_rating(G) >> group1_genre_rating(G)
+
+1.0 : rating(U, I) & group_1(U) >> group1_item_rating(I)
+1.0 : rating(U, I) & group_2(U) >> group2_item_rating(I)
+1.0 : group1_item_rating(G) >> group2_item_rating(G)
+1.0 : group2_item_rating(G) >> group1_item_rating(G)

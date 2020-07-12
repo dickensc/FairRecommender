@@ -13,5 +13,6 @@ def group_predicate(user_df, fold='0', phase='eval'):
     group: possible values are M or F, therefore sort by when 'M' or 'F' in second column
     only need user_df
     """
-    group_series = pd.Series(data=1, index=user_df.gender.unique())
+    # group_series = pd.Series(data=1, index=user_df.gender.unique())
+    group_series = pd.Series(data=1, index=[1, 2])
     write(group_series, 'group_obs', fold, phase)

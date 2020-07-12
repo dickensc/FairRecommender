@@ -6,6 +6,10 @@ from sklearn.metrics import roc_auc_score
 import numpy as np
 
 
+def evaluate_rmse(predicted_df, truth_df, observed_df, target_df, user_df):
+    return np.sqrt(evaluate_mse(predicted_df, truth_df, observed_df, target_df, user_df))
+
+
 def evaluate_mse(predicted_df, truth_df, observed_df, target_df, user_df):
     # consider overlap between observed and truths if there is observed truths
     complete_predictions = observed_df.append(predicted_df)
@@ -116,12 +120,8 @@ def evaluate_non_parity(predicted_df, truth_df, observed_df, target_df, user_df)
     group1_index = user_df.index[user_df.gender == "F"]
     group_1_experiment_frame = experiment_frame.loc[group1_index]
 
-    print(group_1_experiment_frame.val_predicted.mean())
-
     group2_index = user_df.index[user_df.gender == "M"]
     group_2_experiment_frame = experiment_frame.loc[group2_index]
-
-    print(group_2_experiment_frame.val_predicted.mean())
 
     return np.abs(group_1_experiment_frame.val_predicted.mean() - group_2_experiment_frame.val_predicted.mean())
 
@@ -129,7 +129,6 @@ def evaluate_non_parity(predicted_df, truth_df, observed_df, target_df, user_df)
 def evaluate_value(predicted_df, truth_df, observed_df, target_df, user_df):
     # MOVIELENS SPECIFIC
     # inconsistency in signed estimation error
-    print("evaluate_value")
     complete_predictions = observed_df.append(predicted_df)
     complete_predictions = complete_predictions.loc[~complete_predictions.index.duplicated(keep='first')]
 
@@ -165,7 +164,5 @@ def evaluate_value(predicted_df, truth_df, observed_df, target_df, user_df):
     if errors.shape[0] == 0:
         return 0
     else:
-        print("group1_average_error mean over items: {}".format(group1_average_errors.mean()))
-        print("group2_average_error mean over items: {}".format(group2_average_errors.mean()))
         return np.mean(errors)
 

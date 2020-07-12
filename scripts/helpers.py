@@ -47,10 +47,11 @@ def load_user_frame(dataset):
     # path to this file relative to caller
     dirname = os.path.dirname(__file__)
 
-    user_path = "{}/../psl-datasets/{}/data/ml-100k/u.user".format(dirname, dataset)
-    user_df = pd.read_csv(user_path, sep='|', header=None,
-                          encoding="ISO-8859-1")
-    user_df.columns = ['userId', 'age', 'gender', 'occupation', 'zip']
+    user_path = "{}/../psl-datasets/{}/data/ml-1m/users.dat".format(dirname, dataset)
+
+    user_df = pd.read_csv(user_path, sep='::', header=None,
+                          encoding="ISO-8859-1", engine='python')
+    user_df.columns = ['userId', 'gender', 'age', 'occupation', 'zip']
     user_df = user_df.astype({'userId': int})
     user_df = user_df.set_index('userId')
 
@@ -79,6 +80,7 @@ def load_truth_frame(dataset, fold, predicate, phase='eval'):
     dirname = os.path.dirname(__file__)
 
     truth_path = "{}/../psl-datasets/{}/data/{}/{}/{}/{}_truth.txt".format(dirname, dataset, dataset, fold, phase, predicate)
+    print(truth_path)
     truth_df = pd.read_csv(truth_path, sep='\t', header=None)
 
     # clean up column names and set multi-index for predicate

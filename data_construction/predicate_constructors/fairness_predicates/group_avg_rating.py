@@ -18,5 +18,5 @@ def group_average_rating_predicate(user_df, fold='0', phase='eval'):
         G1 and G2 corresponding to 'M' or 'F'
         equalized to enforce non-parity unfairness
     """
-    group_series = pd.Series(data=1, index=user_df.gender.unique())
+    group_series = pd.Series(data=1, index=[1, 2])
     write(group_series, 'group_avg_rating_targets', fold, phase)

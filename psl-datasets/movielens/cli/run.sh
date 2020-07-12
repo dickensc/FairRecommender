@@ -11,9 +11,8 @@ readonly BASE_NAME='movielens'
 readonly POSTGRES_DB='psl'
 readonly STANDARD_PSL_OPTIONS="--postgres ${POSTGRES_DB}"
 
-#readonly ADDITIONAL_PSL_OPTIONS='--int-ids'
-readonly ADDITIONAL_PSL_OPTIONS=' --postgres psl -D admmreasoner.initialconsensusvalue=ZERO -D log4j.threshold=TRACE'
-readonly ADDITIONAL_LEARN_OPTIONS='--learn'
+readonly ADDITIONAL_PSL_OPTIONS='--int-ids  --postgres psl'
+readonly ADDITIONAL_LEARN_OPTIONS='--learn org.linqs.psl.application.learning.weight.bayesian.GaussianProcessPrior -D random.seed=4 -D admmreasoner.initialconsensusvalue=ZERO -D gppker.reldep=1 -D gpp.explore=1 -D gpp.maxiterations=50 -D gppker.space=SS -D gpp.initialweightstd=0.05 -D gpp.initialweightvalue=0.1 -D log4j.threshold=TRACE  -D weightlearning.evaluator=org.linqs.psl.evaluation.statistics.ContinuousEvaluator '
 readonly ADDITIONAL_EVAL_OPTIONS='--infer --eval org.linqs.psl.evaluation.statistics.ContinuousEvaluator '
 
 readonly JAVA_MEM_GB=24
@@ -30,7 +29,7 @@ function main() {
 
    # Run PSL
    runWeightLearning "$@"
-   runEvaluation "$@"
+   # runEvaluation "$@"
 }
 
 function getData() {
@@ -45,7 +44,7 @@ function getData() {
 function runWeightLearning() {
    echo "Running PSL Weight Learning"
 
-   java -XmxG -XmsG -jar "${JAR_PATH}" --model "${BASE_NAME}.psl" --data "${BASE_NAME}-learned.data" ${ADDITIONAL_LEARN_OPTIONS} ${ADDITIONAL_PSL_OPTIONS} "$@"
+   java -Xmx${JAVA_MEM_GB}G -Xms${JAVA_MEM_GB}G -jar "${JAR_PATH}" --model "${BASE_NAME}.psl" --data "${BASE_NAME}-learn.data" ${ADDITIONAL_LEARN_OPTIONS} ${ADDITIONAL_PSL_OPTIONS} "$@"
    if [[ "$?" -ne 0 ]]; then
       echo 'ERROR: Failed to run weight learning'
       exit 60

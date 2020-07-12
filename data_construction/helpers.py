@@ -29,13 +29,13 @@ def query_relevance_cosine_similarity(relevance_df, query_index, item_index, fil
     """
     query_relevance_frame = relevance_df.set_index([query_index, item_index]).unstack()
 
-    query_cosine_similarity_frame = pd.DataFrame(cosine_similarity_frame_from_relevance(query_relevance_frame, fill),
+    query_cosine_distance_frame = pd.DataFrame(cosine_distance_frame_from_relevance(query_relevance_frame, fill),
                                                  index=query_relevance_frame.index, columns=query_relevance_frame.index)
 
-    return query_cosine_similarity_frame.stack()
+    return (1 - query_cosine_distance_frame).stack()
 
 
-def cosine_similarity_frame_from_relevance(data_frame, fill=True):
+def cosine_distance_frame_from_relevance(data_frame, fill=True):
     if fill:
         return pairwise_distances(data_frame.fillna(0), metric='cosine',
                                   force_all_finite='allow-nan')
