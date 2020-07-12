@@ -11,7 +11,7 @@ readonly STUDY_NAME='fairness_study'
 
 readonly FAIRNESS_MODELS='base non_parity value'
 readonly FAIRNESS_WEIGHTS='LEARNED 0.001 0.01 0.1 1.0 10.0'
-readonly WL_METHODS='BOWLSS UNIFORM'
+readonly WL_METHODS='UNIFORM BOWLSS'
 readonly SEED=4
 readonly TRACE_LEVEL='TRACE'
 
@@ -24,7 +24,7 @@ DATASET_EVALUATORS[movielens]='Continuous'
 
 # Weight support by fairness model
 declare -A SUPPORTED_FAIR_WEIGHTS
-SUPPORTED_FAIR_WEIGHTS[base]='0.001'
+SUPPORTED_FAIR_WEIGHTS[base]='LEARNED'
 SUPPORTED_FAIR_WEIGHTS[non_parity]='LEARNED 0.001 0.01 0.1 1.0 10.0'
 SUPPORTED_FAIR_WEIGHTS[value]='LEARNED 0.001 0.01 0.1 1.0 10.0'
 

@@ -68,17 +68,17 @@ def construct_movielens_predicates():
             enumerate(zip(observed_ratings_df_list, train_ratings_df_list, test_ratings_df_list)):
 
         # Standardized
-        # Learn
-        standardized_observed_ratings_df, standardized_truth_ratings_df = standardize_ratings(observed_ratings_df,
-                                                                                              train_ratings_df)
-        write_predicates(standardized_observed_ratings_df, standardized_truth_ratings_df,
-                         user_df, movies_df, 'learn', fold)
-
-        # Eval
-        standardized_observed_ratings_df, standardized_truth_ratings_df = standardize_ratings(
-            observed_ratings_df.append(train_ratings_df, verify_integrity=True), test_ratings_df)
-        write_predicates(standardized_observed_ratings_df, standardized_truth_ratings_df,
-                         user_df, movies_df, 'eval', fold)
+        # # Learn
+        # standardized_observed_ratings_df, standardized_truth_ratings_df = standardize_ratings(observed_ratings_df,
+        #                                                                                       train_ratings_df)
+        # write_predicates(standardized_observed_ratings_df, standardized_truth_ratings_df,
+        #                  user_df, movies_df, 'learn', fold)
+        #
+        # # Eval
+        # standardized_observed_ratings_df, standardized_truth_ratings_df = standardize_ratings(
+        #     observed_ratings_df.append(train_ratings_df, verify_integrity=True), test_ratings_df)
+        # write_predicates(standardized_observed_ratings_df, standardized_truth_ratings_df,
+        #                  user_df, movies_df, 'eval', fold)
 
         # Un-standardized
         print("Fold: {} train predicates".format(fold))
