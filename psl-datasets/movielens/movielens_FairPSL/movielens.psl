@@ -1,6 +1,9 @@
 // Neighborhood-based collaborative filtering
 1.0 : rated(U,I1) & rated(U,I2) & rating(U,I1) & sim_items(I1,I2) >> rating(U,I2)^2
+1.0 : rated(U,I1) & rated(U,I2) & rating(U,I2) & sim_items(I1,I2) >> rating(U,I1)^2
+
 1.0 : rated(U1,I) & rated(U2,I) & rating(U1,I) & sim_users(U1,U2) >> rating(U2,I)^2
+1.0 : rated(U1,I) & rated(U2,I) & rating(U2,I) & sim_users(U1,U2) >> rating(U1,I)^2
 
 // Demographic and content based similarity
 1.0 : rated(U,I1) & rated(U,I2) & rating(U,I1) & sim_content_items(I1,I2) >> rating(U,I2)^2
