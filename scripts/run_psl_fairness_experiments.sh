@@ -10,8 +10,8 @@ readonly BASE_OUT_DIR="${BASE_DIR}/results/fairness"
 readonly STUDY_NAME='fairness_study'
 
 readonly FAIRNESS_MODELS='base non_parity value'
-readonly FAIRNESS_WEIGHTS='LEARNED 0.001 0.01 0.1 1.0 10.0'
-readonly WL_METHODS='UNIFORM BOWLSS'
+readonly FAIRNESS_WEIGHTS='LEARNED 0.01 0.1 1.0 10.0 100.0'
+readonly WL_METHODS='BOWLSS UNIFORM'
 readonly SEED=4
 readonly TRACE_LEVEL='TRACE'
 
