@@ -34,12 +34,12 @@ function main() {
         ./run_fairpsl_fairness_experiments.sh ${dataset_paths}
     popd > /dev/null
 
-#    echo "Running mf fairness experiments on datasets: [${DATASETS}]."
-#      pushd . > /dev/null
-#        cd "./scripts" || exit
-#        # shellcheck disable=SC2086
-#        ./run_mf_fairness_experiments.sh ${dataset_paths}
-#    popd > /dev/null
+    echo "Running mf fairness experiments on datasets: [${DATASETS}]."
+      pushd . > /dev/null
+        cd "./scripts" || exit
+        # shellcheck disable=SC2086
+        ./run_mf_fairness_experiments.sh ${dataset_paths}
+    popd > /dev/null
 }
 
 main "$@"
