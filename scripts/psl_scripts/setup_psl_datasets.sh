@@ -22,7 +22,7 @@ function standard_fixes() {
             cd "${exampleDir}/cli" || exit
 
             # Increase memory allocation.
-            sed -i "s/java -jar/java -Xmx${JAVA_MEM_GB}G -Xms${JAVA_MEM_GB}G -jar/" run.sh
+            sed "s/readonly JAVA_MEM_GB=.*/readonly JAVA_MEM_GB=${JAVA_MEM_GB}/" run.sh
 
             # Deactivate get data step
             # TODO: (Charles) For now until data construction is complete and we host the
