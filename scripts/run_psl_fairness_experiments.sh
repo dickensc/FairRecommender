@@ -11,7 +11,7 @@ readonly STUDY_NAME='fairness_study'
 
 readonly FAIRNESS_MODELS='base non_parity value'
 readonly FAIRNESS_WEIGHTS='LEARNED 0.01 0.25 0.5 0.75 1.0'
-readonly WL_METHODS='CRGS UNIFORM'
+readonly WL_METHODS='UNIFORM BOWLSS'
 readonly SEED=4
 readonly TRACE_LEVEL='TRACE'
 
