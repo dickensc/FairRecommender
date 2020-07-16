@@ -20,7 +20,7 @@ predicates:
     group2_item_rating/1: open
     group1_genre_rating/1: open
     group2_genre_rating/1: open
-    is_genre/1: closed
+    is_genre/2: closed
 
 observations:
     user: ../data/movielens/0/learn/user_obs.txt

@@ -56,7 +56,7 @@ function run_inference() {
     reactivate_evaluation "$example_directory"
 
     # modify runscript to run with the options for this study
-    modify_run_script_options "$example_directory" "$evaluator"
+    modify_run_script_options "$example_directory" "$evaluator" "$fairness_model"
 
     # modify data files to point to the fold
     modify_data_files "$example_directory" "$fold"
@@ -146,6 +146,7 @@ function reactivate_weight_learning() {
 function modify_run_script_options() {
     local example_directory=$1
     local objective=$2
+    local fairness_model=$3
 
     local example_name
     example_name=$(basename "${example_directory}")
@@ -163,8 +164,11 @@ function modify_run_script_options() {
         sed -i "s/^readonly ADDITIONAL_PSL_OPTIONS='.*'$/readonly ADDITIONAL_PSL_OPTIONS='${int_ids_options} ${STANDARD_PSL_OPTIONS}'/" run.sh
 
         # set the ADDITIONAL_EVAL_OPTIONS
-#        sed -i "s/^readonly ADDITIONAL_EVAL_OPTIONS='.*'$/readonly ADDITIONAL_EVAL_OPTIONS='--infer=SGDInference --eval org.linqs.psl.evaluation.statistics.${objective}Evaluator ${EXAMPLE_OPTIONS[${example_name}]}'/" run.sh
-        sed -i "s/^readonly ADDITIONAL_EVAL_OPTIONS='.*'$/readonly ADDITIONAL_EVAL_OPTIONS='--infer -D admmreasoner.stepsize=2.0 --eval org.linqs.psl.evaluation.statistics.${objective}Evaluator ${EXAMPLE_OPTIONS[${example_name}]}'/" run.sh
+        if [ "${fairness_model}" == "base" ]; then
+          sed -i "s/^readonly ADDITIONAL_EVAL_OPTIONS='.*'$/readonly ADDITIONAL_EVAL_OPTIONS='--infer -D admmreasoner.stepsize=1.0 --eval org.linqs.psl.evaluation.statistics.${objective}Evaluator ${EXAMPLE_OPTIONS[${example_name}]}'/" run.sh
+        else
+          sed -i "s/^readonly ADDITIONAL_EVAL_OPTIONS='.*'$/readonly ADDITIONAL_EVAL_OPTIONS='--infer -D admmreasoner.stepsize=2.0 --eval org.linqs.psl.evaluation.statistics.${objective}Evaluator ${EXAMPLE_OPTIONS[${example_name}]}'/" run.sh
+        fi
     popd > /dev/null
 }
 
