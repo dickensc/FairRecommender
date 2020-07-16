@@ -9,7 +9,7 @@ readonly BASE_OUT_DIR="${BASE_DIR}/results/fairness"
 
 readonly STUDY_NAME='fairness_study'
 
-readonly WL_METHODS='CRGS UNIFORM'
+readonly WL_METHODS='UNIFORM BOWLSS'
 readonly SEED=4
 readonly TRACE_LEVEL='TRACE'
 

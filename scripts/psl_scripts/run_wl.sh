@@ -9,7 +9,7 @@ readonly SUPPORTED_WL_METHODS='UNIFORM BOWLOS BOWLSS CRGS HB RGS LME MLE MPLE'
 readonly SUPPORTED_EXAMPLES='movielens'
 
 # Examples that cannot use int ids.
-readonly STRING_IDS=''
+readonly STRING_IDS='FairPSL'
 
 # Standard options for all examples and models
 # note that this is assuming that we are only using datasets that have int-ids
@@ -214,7 +214,7 @@ function modify_run_script_options() {
     fi
 
     # Check for int ids.
-    if [[ "${STRING_IDS}" != *"${example_name}"* ]]; then
+    if [[ "${STRING_IDS}" != *"${fairness_model}"* ]]; then
         int_ids_options="--int-ids ${int_ids_options}"
     fi
 
