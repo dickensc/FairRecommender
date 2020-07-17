@@ -34,7 +34,7 @@ function run_example() {
 
     local cli_directory="${BASE_DIR}/${example_directory}/cli"
 
-    out_directory="${BASE_OUT_DIR}/psl/${STUDY_NAME}/${example_name}/${wl_method}/${evaluator}/FairPSL/${fair_weight}"/${fold}
+    out_directory="${BASE_OUT_DIR}/psl/${STUDY_NAME}/${example_name}/${wl_method}/${evaluator}/FairPSL/LEARNED/${fold}"
 
     # Only make a new out directory if it does not already exist
     [[ -d "$out_directory" ]] || mkdir -p "$out_directory"

@@ -1,0 +1,14 @@
+// Predictions by local non-negative matrix factorization and naive bayes predictor
+1.0 : nmf_rating(U, I) & target(U, I) >> rating(U, I)^2
+1.0 : rating(U, I) & target(U, I) >> nmf_rating(U, I)^2
+
+// Value Unfairness
+// Minimizes the inconsistency in signed estimation error across groups
+// U_val = 1/n \sum_j |(average_predicted_rating_j_g1 - average_true_rating_j_g1 ) -
+//                     (average_predicted_rating_j_g2 - average_true_rating_j_g2 )|
+
+// Calculate average group item rating and preference
+rating(+U, I) / @Max[1, |U|] = pred_group_average_item_rating(G, I) . {U: group_member(U, G) & target(U, I)}
+
+// Value unfairness metric
+1.0 : pred_group_average_item_rating(G1, I) - obs_group_average_item_rating(G1, I) = pred_group_average_item_rating(G2, I) - obs_group_average_item_rating(G2, I)

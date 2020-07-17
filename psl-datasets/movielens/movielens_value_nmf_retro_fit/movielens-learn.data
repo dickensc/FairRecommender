@@ -1,0 +1,24 @@
+predicates:
+    target/2: closed
+    nmf_rating/2: closed
+    rating/2: open
+    group_member/2: closed
+    pred_group_average_item_rating/2: open
+    obs_group_average_item_rating/2: closed
+
+observations:
+    target: ../data/movielens/0/learn/target_obs.txt
+    group_member: ../data/movielens/0/learn/group_member_obs.txt
+
+    nmf_rating: ../data/movielens/0/learn/nmf_rating_obs.txt
+
+    obs_group_average_item_rating: ../data/movielens/0/learn/obs_group_average_item_rating_obs.txt
+
+    rating: ../data/movielens/0/learn/rating_obs.txt
+
+targets:
+   rating: ../data/movielens/0/learn/rating_targets.txt
+   pred_group_average_item_rating: ../data/movielens/0/learn/pred_group_average_item_rating_targets.txt
+
+truth:
+   rating: ../data/movielens/0/learn/rating_truth.txt

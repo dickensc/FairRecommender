@@ -1,0 +1,30 @@
+predicates:
+    target/2: closed
+    nmf_rating/2: closed
+    rating/2: open
+    group_1/1: closed
+    group_2/1: closed
+    group_1_item_block/1: closed
+    group_2_item_block/1: closed
+    group1_avg_rating/1: open
+    group2_avg_rating/1: open
+
+observations:
+    target: ../data/movielens/0/eval/target_obs.txt
+    group_1: ../data/movielens/0/eval/group_1_obs.txt
+    group_2: ../data/movielens/0/eval/group_2_obs.txt
+
+    group_1_item_block: ../data/movielens/0/eval/group_1_item_block_obs.txt
+    group_2_item_block: ../data/movielens/0/eval/group_2_item_block_obs.txt
+
+    nmf_rating: ../data/movielens/0/eval/nmf_rating_obs.txt
+
+    rating: ../data/movielens/0/eval/rating_obs.txt
+
+targets:
+   rating: ../data/movielens/0/eval/rating_targets.txt
+   group1_avg_rating: ../data/movielens/0/eval/group1_avg_rating_targets.txt
+   group2_avg_rating: ../data/movielens/0/eval/group2_avg_rating_targets.txt
+
+truth:
+   rating: ../data/movielens/0/eval/rating_truth.txt

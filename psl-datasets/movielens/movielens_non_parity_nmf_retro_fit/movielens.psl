@@ -1,0 +1,9 @@
+// Predictions by local non-negative matrix factorization and naive bayes predictor
+1.0 : nmf_rating(U, I) & target(U, I) >> rating(U, I)^2
+1.0 : rating(U, I) & target(U, I) >> nmf_rating(U, I)^2
+
+// Non-Parity Unfairness Constraints
+// Non parity minimizes the absolute difference between the overall average.
+rating(+U, +I) / DENOMINATOR_1 = group1_avg_rating(c) . {U: group_1(U)} {I: group_1_item_block(I) & target(U,I)}
+rating(+U, +I) / DENOMINATOR_2 = group2_avg_rating(c) . {U: group_2(U)} {I: group_2_item_block(I) & target(U,I)}
+1.0 : group1_avg_rating(c) = group2_avg_rating(c)

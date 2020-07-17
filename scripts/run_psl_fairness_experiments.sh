@@ -9,14 +9,15 @@ readonly BASE_OUT_DIR="${BASE_DIR}/results/fairness"
 
 readonly STUDY_NAME='fairness_study'
 
-readonly FAIRNESS_MODELS='base non_parity value'
+#readonly FAIRNESS_MODELS='base non_parity value nmf non_parity_nmf_retro_fit value_nmf_retro_fit'
+readonly FAIRNESS_MODELS='nmf non_parity_nmf_retro_fit value_nmf_retro_fit'
 readonly FAIRNESS_WEIGHTS='LEARNED 0.01 0.25 0.5 0.75 1.0'
 readonly WL_METHODS='UNIFORM BOWLSS'
 readonly SEED=4
 readonly TRACE_LEVEL='TRACE'
 
 readonly SUPPORTED_DATASETS='movielens'
-readonly SUPPORTED_FAIRNESS_MODELS='base non_parity value'
+readonly SUPPORTED_FAIRNESS_MODELS='base non_parity value nmf non_parity_nmf_retro_fit value_nmf_retro_fit'
 
 # Evaluators to be use for each example
 declare -A DATASET_EVALUATORS
@@ -27,6 +28,9 @@ declare -A SUPPORTED_FAIR_WEIGHTS
 SUPPORTED_FAIR_WEIGHTS[base]='LEARNED'
 SUPPORTED_FAIR_WEIGHTS[non_parity]='LEARNED 0.01 0.25 0.5 0.75 1.0'
 SUPPORTED_FAIR_WEIGHTS[value]='LEARNED 0.01 0.25 0.5 0.75 1.0'
+SUPPORTED_FAIR_WEIGHTS[nmf]='LEARNED'
+SUPPORTED_FAIR_WEIGHTS[non_parity_nmf_retro_fit]='LEARNED 0.01 0.25 0.5 0.75 1.0'
+SUPPORTED_FAIR_WEIGHTS[value_nmf_retro_fit]='LEARNED 0.01 0.25 0.5 0.75 1.0'
 
 # Evaluators to be use for each example
 # todo: (Charles D.) just read this information from psl example data directory rather than hardcoding
@@ -164,17 +168,17 @@ function write_fairness_weight() {
         if [[ ${fairness_model} != 'base' && ${fairness_weight} != 'LEARNED' ]]; then
           if [[ ${wl_method} == 'UNIFORM' ]]; then
             # set the fairness related rule weights in the learned file to the fairness_weight value and write to learned.psl file
-            if [[ ${fairness_model} == 'non_parity' ]]; then
+            if [[ ${fairness_model} == 'non_parity' || ${fairness_model} == 'non_parity_nmf_retro_fit' ]]; then
               rule="group1_avg_rating\(c\) = group2_avg_rating\(c\)"
-            elif [[ ${fairness_model} == 'value' ]]; then
+            elif [[ ${fairness_model} == 'value' || ${fairness_model} == 'value_nmf_retro_fit' ]]; then
               rule="pred_group_average_item_rating\(G1, I\) - obs_group_average_item_rating\(G1, I\) = pred_group_average_item_rating\(G2, I\) - obs_group_average_item_rating\(G2, I\)"
             fi
 
             sed -i -r "s/^[0-9]+.[0-9]+ : ${rule}|^[0-9]+ : ${rule}/${fairness_weight}: ${rule}/g"  "${example_name}-learned.psl"
           else
-            if [[ ${fairness_model} == 'non_parity' ]]; then
+            if [[ ${fairness_model} == 'non_parity' || ${fairness_model} == 'non_parity_nmf_retro_fit' ]]; then
               rule="1.0 \* GROUP1_AVG_RATING\(c\) \+ -1.0 \* GROUP2_AVG_RATING\(c\) = 0.0"
-            elif [[ ${fairness_model} == 'value' ]]; then
+            elif [[ ${fairness_model} == 'value' || ${fairness_model} == 'value_nmf_retro_fit' ]]; then
               rule="1.0 \* PRED_GROUP_AVERAGE_ITEM_RATING\(G1, I\) \+ -1.0 \* OBS_GROUP_AVERAGE_ITEM_RATING\(G1, I\) \+ -1.0 \* PRED_GROUP_AVERAGE_ITEM_RATING\(G2, I\) \+ 1.0 \* OBS_GROUP_AVERAGE_ITEM_RATING\(G2, I\) = 0.0"
             fi
 

@@ -265,7 +265,7 @@ function modify_model_file() {
     local example_name
     example_name=$(basename "${example_directory}")
 
-    if [[ "${fairness_metric}" == "non_parity" ]]; then
+    if [[ "${fairness_metric}" == "non_parity" || "${fairness_metric}" == "non_parity_nmf_retro_fit" ]]; then
       pushd . > /dev/null
           cd "${example_directory}/cli" || exit
 
