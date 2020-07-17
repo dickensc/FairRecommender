@@ -196,24 +196,24 @@ function main() {
     local example_name
 
     for example_directory in "$@"; do
-      for fair_weight in ${FAIRNESS_WEIGHTS}; do
-        for wl_method in ${WL_METHODS}; do
-           example_name=$(basename "${example_directory}")
-           for evaluator in ${DATASET_EVALUATORS[${example_name}]}; do
-              for ((fold=0; fold<${DATASET_FOLDS[${example_name}]}; fold++)) do
-                 for fairness_model in ${FAIRNESS_MODELS}; do
-                    if [[ "${SUPPORTED_DATASETS}" == *"${example_name}"* ]]; then
-                        if [[ "${SUPPORTED_FAIRNESS_MODELS}" == *"${fairness_model}"* ]]; then
-                           if [[ "${SUPPORTED_FAIR_WEIGHTS[${fairness_model}]}" == *"${fair_weight}"* ]]; then
-                            run_example "${example_directory}" "${wl_method}" "${fairness_model}" "${fold}" "${fair_weight}"
-                           fi
-                        fi
-                    fi
-                 done
+      for wl_method in ${WL_METHODS}; do
+        for fair_weight in ${FAIRNESS_WEIGHTS}; do
+             example_name=$(basename "${example_directory}")
+             for evaluator in ${DATASET_EVALUATORS[${example_name}]}; do
+                for ((fold=0; fold<${DATASET_FOLDS[${example_name}]}; fold++)) do
+                   for fairness_model in ${FAIRNESS_MODELS}; do
+                      if [[ "${SUPPORTED_DATASETS}" == *"${example_name}"* ]]; then
+                          if [[ "${SUPPORTED_FAIRNESS_MODELS}" == *"${fairness_model}"* ]]; then
+                             if [[ "${SUPPORTED_FAIR_WEIGHTS[${fairness_model}]}" == *"${fair_weight}"* ]]; then
+                              run_example "${example_directory}" "${wl_method}" "${fairness_model}" "${fold}" "${fair_weight}"
+                             fi
+                          fi
+                      fi
+                   done
+                done
               done
-            done
+          done
         done
-      done
     done
 
     return 0
