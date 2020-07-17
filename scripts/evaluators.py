@@ -163,6 +163,45 @@ def evaluate_value(predicted_df, truth_df, observed_df, target_df, user_df):
         return np.mean(errors)
 
 
+def evaluate_absolute(predicted_df, truth_df, observed_df, target_df, user_df):
+    # MOVIELENS SPECIFIC
+    # inconsistency in signed estimation error
+    complete_predictions = observed_df.append(predicted_df)
+    complete_predictions = complete_predictions.loc[~complete_predictions.index.duplicated(keep='first')]
+
+    # evaluator indices
+    evaluator_indices = truth_df.index.intersection(target_df.index)
+
+    # Join predicted_df and truth_df on the arguments
+    experiment_frame = truth_df.loc[evaluator_indices].join(complete_predictions, how="left",
+                                                            lsuffix='_truth', rsuffix='_predicted')
+
+    # Group experiment frame
+    group1_index = user_df.index[user_df.gender == "F"]
+    group_1_experiment_frame = experiment_frame.loc[group1_index]
+
+    group2_index = user_df.index[user_df.gender == "M"]
+    group_2_experiment_frame = experiment_frame.loc[group2_index]
+
+    group_1_by_item = group_1_experiment_frame.groupby(level=1)
+    group_2_by_item = group_2_experiment_frame.groupby(level=1)
+    errors = np.array([])
+    for item in experiment_frame.index.unique(level=1):
+        try:
+            group1_error = np.abs(group_1_by_item.get_group(item).val_predicted.mean() -
+                                  group_1_by_item.get_group(item).val_truth.mean())
+            group2_error = np.abs(group_2_by_item.get_group(item).val_predicted.mean() -
+                                  group_2_by_item.get_group(item).val_truth.mean())
+        except KeyError as ignored:
+            continue
+        errors = np.append(errors, (np.abs(group1_error - group2_error)))
+
+    if errors.shape[0] == 0:
+        return 0
+    else:
+        return np.mean(errors)
+
+
 def evaluate_under_estimation(predicted_df, truth_df, observed_df, target_df, user_df):
     # MOVIELENS SPECIFIC
     # inconsistency in under estimation error
@@ -235,4 +274,7 @@ def evaluate_over_estimation(predicted_df, truth_df, observed_df, target_df, use
         return 0
     else:
         return np.mean(errors)
+
+
+
 
