@@ -20,6 +20,9 @@ from evaluators import evaluate_rmse
 from evaluators import evaluate_roc_auc_score
 from evaluators import evaluate_non_parity
 from evaluators import evaluate_value
+from evaluators import evaluate_over_estimation
+from evaluators import evaluate_under_estimation
+from evaluators import evaluate_absolute
 
 DATASET_PROPERTIES = {'movielens': {'evaluation_predicate': 'rating', 'evaluator': ('Continuous', evaluate_rmse)}}
 
@@ -32,7 +35,10 @@ EVALUATOR_NAME_TO_METHOD = {
 
 FAIRNESS_NAME_TO_EVALUATOR = {
     'non_parity': evaluate_non_parity,
-    'value': evaluate_value
+    'value': evaluate_value,
+    'over_estimation': evaluate_over_estimation,
+    'under_estimation': evaluate_under_estimation,
+    'absolute': evaluate_absolute
 }
 
 MF_MODELS = ['Absolute', 'None', 'Over+Under', 'Overestimation', 'Parity', 'Underestimation', 'Value']
