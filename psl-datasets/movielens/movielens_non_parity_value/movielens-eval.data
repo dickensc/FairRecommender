@@ -1,0 +1,60 @@
+predicates:
+    user/1: closed
+    item/1: closed
+    target/2: closed
+    sim_content_items/2: closed
+    sim_demo_users/2: closed
+    sim_items/2: closed
+    sim_users/2: closed
+    avg_item_rating/1: closed
+    avg_user_rating/1: closed
+    rated/2: closed
+    nmf_rating/2: closed
+    svd_rating/2: closed
+    nb_rating/2: closed
+    rating/2: open
+    group_member/2: closed
+    group_1/1: closed
+    group_2/1: closed
+    group_1_item_block/1: closed
+    group_2_item_block/1: closed
+    group1_avg_rating/1: open
+    group2_avg_rating/1: open
+    pred_group_average_item_rating/2: open
+    obs_group_average_item_rating/2: closed
+
+observations:
+    user: ../data/movielens/0/eval/user_obs.txt
+    target: ../data/movielens/0/eval/target_obs.txt
+    item: ../data/movielens/0/eval/item_obs.txt
+    rated: ../data/movielens/0/eval/rated_obs.txt
+    group_member: ../data/movielens/0/eval/group_member_obs.txt
+    group_1: ../data/movielens/0/eval/group_1_obs.txt
+    group_2: ../data/movielens/0/eval/group_2_obs.txt
+
+    sim_content_items: ../data/movielens/0/eval/sim_content_items_obs.txt
+    sim_demo_users: ../data/movielens/0/eval/sim_demo_users_obs.txt
+    sim_items: ../data/movielens/0/eval/sim_items_obs.txt
+    sim_users: ../data/movielens/0/eval/sim_users_obs.txt
+    group_1_item_block: ../data/movielens/0/eval/group_1_item_block_obs.txt
+    group_2_item_block: ../data/movielens/0/eval/group_2_item_block_obs.txt
+
+    avg_item_rating: ../data/movielens/0/eval/avg_item_rating_obs.txt
+    avg_user_rating: ../data/movielens/0/eval/avg_user_rating_obs.txt
+
+    nmf_rating: ../data/movielens/0/eval/nmf_rating_obs.txt
+    svd_rating: ../data/movielens/0/eval/svd_rating_obs.txt
+    nb_rating: ../data/movielens/0/eval/nb_rating_obs.txt
+
+    obs_group_average_item_rating: ../data/movielens/0/eval/obs_group_average_item_rating_obs.txt
+
+    rating: ../data/movielens/0/eval/rating_obs.txt
+
+targets:
+   rating: ../data/movielens/0/eval/rating_targets.txt
+   pred_group_average_item_rating: ../data/movielens/0/eval/pred_group_average_item_rating_targets.txt
+   group1_avg_rating: ../data/movielens/0/eval/group1_avg_rating_targets.txt
+   group2_avg_rating: ../data/movielens/0/eval/group2_avg_rating_targets.txt
+
+truth:
+   rating: ../data/movielens/0/eval/rating_truth.txt
