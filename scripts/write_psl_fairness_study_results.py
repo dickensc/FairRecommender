@@ -21,11 +21,23 @@ from evaluators import evaluate_rmse
 from evaluators import evaluate_roc_auc_score
 from evaluators import evaluate_non_parity
 from evaluators import evaluate_value
+from evaluators import evaluate_over_estimation
+from evaluators import evaluate_under_estimation
+from evaluators import evaluate_absolute
 
-DATASET_PROPERTIES = {'movielens': {'evaluation_predicate': 'rating'},
-'movielens_non_parity': {'evaluation_predicate': 'rating'},
-'movielens_value': {'evaluation_predicate': 'rating'}
-                      }
+# DATASET_PROPERTIES = {
+#     'movielens': {'evaluation_predicate': 'rating'},
+#     'movielens_non_parity': {'evaluation_predicate': 'rating'},
+#     'movielens_value': {'evaluation_predicate': 'rating'},
+#     'movielens_FairPSL': {'evaluation_predicate': 'rating'},
+#     'movielens_nmf': {'evaluation_predicate': 'rating'},
+#     'movielens_non_parity_nmf_retro_fit': {'evaluation_predicate': 'rating'},
+#     'movielens_value_nmf_retro_fit': {'evaluation_predicate': 'rating'}
+# }
+
+DATASET_PROPERTIES = {
+    'movielens': {'evaluation_predicate': 'rating'}
+}
 
 EVALUATOR_NAME_TO_METHOD = {
     'Categorical': evaluate_accuracy,
@@ -36,7 +48,10 @@ EVALUATOR_NAME_TO_METHOD = {
 
 FAIRNESS_NAME_TO_EVALUATOR = {
     'non_parity': evaluate_non_parity,
-    'value': evaluate_value
+    'value': evaluate_value,
+    'over_estimation': evaluate_over_estimation,
+    'under_estimation': evaluate_under_estimation,
+    'absolute': evaluate_absolute
 }
 
 PERFORMANCE_COLUMNS = ['Dataset', 'Wl_Method', 'Fairness_Model', 'Fairness_Regularizer', 'Evaluation_Method', 'Evaluator_Mean', 'Evaluator_Standard_Deviation']
