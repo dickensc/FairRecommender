@@ -6,10 +6,7 @@ import os
 import subprocess
 
 # generic helpers
-from helpers import load_truth_frame
-from helpers import load_observed_frame
-from helpers import load_target_frame
-from helpers import load_user_frame
+from helpers import frameLoader
 
 # helpers for experiment specific processing
 from psl_scripts.helpers import load_prediction_frame as load_psl_prediction_frame
@@ -58,6 +55,7 @@ PERFORMANCE_COLUMNS = ['Dataset', 'Wl_Method', 'Fairness_Model', 'Fairness_Regul
 PERFORMANCE_COLUMNS = PERFORMANCE_COLUMNS + [metric + '_Mean' for metric in FAIRNESS_NAME_TO_EVALUATOR.keys()]
 PERFORMANCE_COLUMNS = PERFORMANCE_COLUMNS + [metric + '_Standard_Deviation' for metric in FAIRNESS_NAME_TO_EVALUATOR.keys()]
 
+FRAME_LOADER = frameLoader()
 
 def main():
     method = 'psl'
@@ -138,14 +136,14 @@ def calculate_experiment_performance(method, dataset, wl_method, evaluator, fold
             continue
 
         # truth dataframe
-        truth_df = load_truth_frame(dataset, fold, DATASET_PROPERTIES[dataset]['evaluation_predicate'])
+        truth_df = FRAME_LOADER.load_truth_frame(dataset, fold, DATASET_PROPERTIES[dataset]['evaluation_predicate'])
         # observed dataframe
-        observed_df = load_observed_frame(dataset, fold, DATASET_PROPERTIES[dataset]['evaluation_predicate'])
+        observed_df = FRAME_LOADER.load_observed_frame(dataset, fold, DATASET_PROPERTIES[dataset]['evaluation_predicate'])
         # target dataframe
-        target_df = load_target_frame(dataset, fold, DATASET_PROPERTIES[dataset]['evaluation_predicate'])
+        target_df = FRAME_LOADER.load_target_frame(dataset, fold, DATASET_PROPERTIES[dataset]['evaluation_predicate'])
         # user dataframe
         # TODO (Charles) : assumes every dataset in this experiment infrastructure has a user frame
-        user_df = load_user_frame(dataset)
+        user_df = FRAME_LOADER.load_user_frame(dataset)
 
         experiment_performance = np.append(experiment_performance,
                                            EVALUATOR_NAME_TO_METHOD[evaluator](predicted_df,
