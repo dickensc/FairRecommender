@@ -227,8 +227,8 @@ def evaluate_under_estimation(predicted_df, truth_df, observed_df, target_df, us
     errors = np.array([])
     for item in experiment_frame.index.unique(level=1):
         try:
-            group1_error = np.max((group_1_by_item.get_group(item).val_truth.mean() - group_1_by_item.get_group(item).val_predicted.mean()), 0)
-            group2_error = np.max((group_2_by_item.get_group(item).val_truth.mean() - group_2_by_item.get_group(item).val_predicted.mean()), 0)
+            group1_error = np.maximum((group_1_by_item.get_group(item).val_truth.mean() - group_1_by_item.get_group(item).val_predicted.mean()), 0)
+            group2_error = np.maximum((group_2_by_item.get_group(item).val_truth.mean() - group_2_by_item.get_group(item).val_predicted.mean()), 0)
         except KeyError as ignored:
             continue
         errors = np.append(errors, (np.abs(group1_error - group2_error)))
@@ -264,8 +264,8 @@ def evaluate_over_estimation(predicted_df, truth_df, observed_df, target_df, use
     errors = np.array([])
     for item in experiment_frame.index.unique(level=1):
         try:
-            group1_error = np.max((group_1_by_item.get_group(item).val_predicted.mean() - group_1_by_item.get_group(item).val_truth.mean()), 0)
-            group2_error = np.max((group_2_by_item.get_group(item).val_predicted.mean() - group_2_by_item.get_group(item).val_truth.mean()), 0)
+            group1_error = np.maximum((group_1_by_item.get_group(item).val_predicted.mean() - group_1_by_item.get_group(item).val_truth.mean()), 0)
+            group2_error = np.maximum((group_2_by_item.get_group(item).val_predicted.mean() - group_2_by_item.get_group(item).val_truth.mean()), 0)
         except KeyError as ignored:
             continue
         errors = np.append(errors, (np.abs(group1_error - group2_error)))
