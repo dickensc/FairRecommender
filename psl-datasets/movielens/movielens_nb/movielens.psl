@@ -1,0 +1,3 @@
+// Predictions by local non-negative matrix factorization and naive bayes predictor
+1.0 : nb_rating(U, I) & target(U, I) >> rating(U, I)^2
+1.0 : rating(U, I) & target(U, I) >> nb_rating(U, I)^2

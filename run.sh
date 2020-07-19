@@ -19,19 +19,19 @@ function main() {
     # required for both Tuffy and PSL experiments
     ./scripts/psl_scripts/setup_psl_datasets.sh
 
-#    echo "Running psl fairness experiments on datasets: [${DATASETS}]."
-#    pushd . > /dev/null
-#        cd "./scripts" || exit
-#        # shellcheck disable=SC2086
-#        ./run_psl_fairness_experiments.sh ${dataset_paths}
-#    popd > /dev/null
-
-    echo "Running FairPSL experiments on datasets: [${DATASETS}]."
+    echo "Running psl fairness experiments on datasets: [${DATASETS}]."
     pushd . > /dev/null
         cd "./scripts" || exit
         # shellcheck disable=SC2086
-        ./run_fairpsl_fairness_experiments.sh ${dataset_paths}
+        ./run_psl_fairness_experiments.sh ${dataset_paths}
     popd > /dev/null
+
+#    echo "Running FairPSL experiments on datasets: [${DATASETS}]."
+#    pushd . > /dev/null
+#        cd "./scripts" || exit
+#        # shellcheck disable=SC2086
+#        ./run_fairpsl_fairness_experiments.sh ${dataset_paths}
+#    popd > /dev/null
 
 #    echo "Running mf fairness experiments on datasets: [${DATASETS}]."
 #      pushd . > /dev/null
