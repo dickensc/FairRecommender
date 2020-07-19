@@ -9,16 +9,16 @@ readonly BASE_OUT_DIR="${BASE_DIR}/results/fairness"
 
 readonly STUDY_NAME='fairness_study'
 
-readonly FAIRNESS_MODELS='base non_parity value non_parity_value nmf non_parity_nmf_retro_fit value_nmf_retro_fit'
-readonly FAIRNESS_WEIGHTS='LEARNED 0.00001 0.001 0.01 0.1 1.0 10.0 100.0 1000.0 10000.0'
-#readonly FAIRNESS_WEIGHTS='LEARNED'
-#readonly WL_METHODS='UNIFORM BOWLSS'
+#readonly FAIRNESS_MODELS='base non_parity value non_parity_value nmf non_parity_nmf_retro_fit value_nmf_retro_fit'
+readonly FAIRNESS_MODELS='non_parity_value'
+#readonly FAIRNESS_WEIGHTS='LEARNED 0.00001 0.001 0.01 0.1 1.0 10.0 100.0 1000.0 10000.0'
+readonly FAIRNESS_WEIGHTS='LEARNED'
 readonly WL_METHODS='UNIFORM'
 readonly SEED=4
 readonly TRACE_LEVEL='TRACE'
 
 readonly SUPPORTED_DATASETS='movielens'
-readonly SUPPORTED_FAIRNESS_MODELS='base non_parity value nmf non_parity_nmf_retro_fit value_nmf_retro_fit'
+readonly SUPPORTED_FAIRNESS_MODELS='base non_parity value non_parity_value nmf non_parity_nmf_retro_fit value_nmf_retro_fit'
 
 # Evaluators to be use for each example
 declare -A DATASET_EVALUATORS
