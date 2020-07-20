@@ -10,7 +10,7 @@ readonly BASE_OUT_DIR="${BASE_DIR}/results/fairness"
 readonly STUDY_NAME='fairness_study'
 
 #readonly FAIRNESS_MODELS='base non_parity value non_parity_value nmf nb non_parity_nmf_retro_fit value_nmf_retro_fit'
-readonly FAIRNESS_MODELS='nb'
+readonly FAIRNESS_MODELS='value'
 readonly FAIRNESS_WEIGHTS='LEARNED 0.00001 0.0001 0.001 0.01 0.1 1.0 10.0 100.0 1000.0 10000.0'
 readonly WL_METHODS='UNIFORM'
 readonly SEED=4
@@ -27,7 +27,7 @@ DATASET_EVALUATORS[movielens]='Continuous'
 declare -A SUPPORTED_FAIR_WEIGHTS
 SUPPORTED_FAIR_WEIGHTS[base]='LEARNED'
 SUPPORTED_FAIR_WEIGHTS[non_parity]='LEARNED'
-SUPPORTED_FAIR_WEIGHTS[value]='LEARNED 0.001'
+SUPPORTED_FAIR_WEIGHTS[value]='0.001'
 SUPPORTED_FAIR_WEIGHTS[non_parity_value]='LEARNED'
 SUPPORTED_FAIR_WEIGHTS[nb]='LEARNED'
 SUPPORTED_FAIR_WEIGHTS[nmf]='LEARNED'
