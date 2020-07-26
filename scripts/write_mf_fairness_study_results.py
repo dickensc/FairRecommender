@@ -5,10 +5,8 @@ import sys
 import os
 
 # generic helpers
-from helpers import load_truth_frame
-from helpers import load_observed_frame
-from helpers import load_target_frame
-from helpers import load_user_frame
+from helpers import frameLoader
+
 
 # helpers for experiment specific processing
 from psl_scripts.helpers import load_prediction_frame
@@ -47,6 +45,7 @@ PERFORMANCE_COLUMNS = ['Dataset', 'Wl_Method', 'Fairness_Model', 'Fairness_Regul
 PERFORMANCE_COLUMNS = PERFORMANCE_COLUMNS + [metric + '_Mean' for metric in FAIRNESS_NAME_TO_EVALUATOR.keys()]
 PERFORMANCE_COLUMNS = PERFORMANCE_COLUMNS + [metric + '_Standard_Deviation' for metric in FAIRNESS_NAME_TO_EVALUATOR.keys()]
 
+FRAME_LOADER = frameLoader()
 
 def main():
     method = 'mf'
@@ -100,6 +99,7 @@ def calculate_experiment_performance(method, dataset, fairness_regularizer, mf_m
                 predicted_path = "results/fairness/mf/{}/{}/{}/{}/predictions_{}_{}_obs_mf.txt".format(
                     "fairness_study", dataset, fairness_regularizer, fold, mf_model,
                     DATASET_PROPERTIES[dataset]['evaluation_predicate'])
+                print("Predicted Path: {}".format(predicted_path))
                 predicted_df = load_prediction_frame(predicted_path)
             else:
                 raise ValueError("{} not supported. Try one of: ['mf']".format(method))
@@ -108,14 +108,14 @@ def calculate_experiment_performance(method, dataset, fairness_regularizer, mf_m
             continue
 
         # truth dataframe
-        truth_df = load_truth_frame(dataset, fold, DATASET_PROPERTIES[dataset]['evaluation_predicate'])
+        truth_df = FRAME_LOADER.load_truth_frame(dataset, fold, DATASET_PROPERTIES[dataset]['evaluation_predicate'])
         # observed dataframe
-        observed_df = load_observed_frame(dataset, fold, DATASET_PROPERTIES[dataset]['evaluation_predicate'])
+        observed_df = FRAME_LOADER.load_observed_frame(dataset, fold, DATASET_PROPERTIES[dataset]['evaluation_predicate'])
         # target dataframe
-        target_df = load_target_frame(dataset, fold, DATASET_PROPERTIES[dataset]['evaluation_predicate'])
+        target_df = FRAME_LOADER.load_target_frame(dataset, fold, DATASET_PROPERTIES[dataset]['evaluation_predicate'])
         # user dataframe
         # TODO (Charles) : assumes every dataset in this experiment infrastructure has a user frame
-        user_df = load_user_frame(dataset)
+        user_df = FRAME_LOADER.load_user_frame(dataset)
 
         experiment_performance = np.append(experiment_performance,
                                            DATASET_PROPERTIES[dataset]['evaluator'][1](predicted_df,
@@ -133,6 +133,7 @@ def calculate_experiment_performance(method, dataset, fairness_regularizer, mf_m
                                                                                        user_df))
 
     # organize into a performance_series
+    # TODO(Charles): *5 is for movielens
     performance_series = pd.Series(index=PERFORMANCE_COLUMNS,
                                    dtype=float)
     performance_series['Dataset'] = dataset
@@ -140,11 +141,11 @@ def calculate_experiment_performance(method, dataset, fairness_regularizer, mf_m
     performance_series['Fairness_Model'] = mf_model
     performance_series['Fairness_Regularizer'] = fairness_regularizer
     performance_series['Evaluation_Method'] = DATASET_PROPERTIES[dataset]['evaluator'][0]
-    performance_series['Evaluator_Mean'] = experiment_performance.mean()
-    performance_series['Evaluator_Standard_Deviation'] = experiment_performance.std()
+    performance_series['Evaluator_Mean'] = experiment_performance.mean() * 5
+    performance_series['Evaluator_Standard_Deviation'] = experiment_performance.std() * 5
     for metric in FAIRNESS_NAME_TO_EVALUATOR.keys():
-        performance_series[metric + '_Mean'] = experiment_fairness[metric].mean()
-        performance_series[metric + '_Standard_Deviation'] = experiment_fairness[metric].std()
+        performance_series[metric + '_Mean'] = experiment_fairness[metric].mean() * 5
+        performance_series[metric + '_Standard_Deviation'] = experiment_fairness[metric].std() * 5
 
     return performance_series
 

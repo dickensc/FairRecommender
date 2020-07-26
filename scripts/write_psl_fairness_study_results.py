@@ -161,6 +161,7 @@ def calculate_experiment_performance(method, dataset, wl_method, evaluator, fold
                                                                                        user_df))
 
     # organize into a performance_series
+    # TODO(Charles): *5 is for movielens
     performance_series = pd.Series(index=PERFORMANCE_COLUMNS,
                                    dtype=float)
     performance_series['Dataset'] = dataset
@@ -168,11 +169,11 @@ def calculate_experiment_performance(method, dataset, wl_method, evaluator, fold
     performance_series['Fairness_Model'] = model
     performance_series['Fairness_Regularizer'] = weight
     performance_series['Evaluation_Method'] = evaluator
-    performance_series['Evaluator_Mean'] = experiment_performance.mean()
-    performance_series['Evaluator_Standard_Deviation'] = experiment_performance.std()
+    performance_series['Evaluator_Mean'] = experiment_performance.mean() * 5
+    performance_series['Evaluator_Standard_Deviation'] = experiment_performance.std() * 5
     for metric in FAIRNESS_NAME_TO_EVALUATOR.keys():
-        performance_series[metric + '_Mean'] = experiment_fairness[metric].mean()
-        performance_series[metric + '_Standard_Deviation'] = experiment_fairness[metric].std()
+        performance_series[metric + '_Mean'] = experiment_fairness[metric].mean() * 5
+        performance_series[metric + '_Standard_Deviation'] = experiment_fairness[metric].std() * 5
 
     return performance_series
 
