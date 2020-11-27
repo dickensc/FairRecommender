@@ -27,21 +27,30 @@ def group_average_item_rating_predicate(observed_ratings_df, user_df, movies_df,
 
     reindexed_ratings_df = observed_ratings_df.reset_index()
     ratings_by_group = reindexed_ratings_df.groupby(lambda x: user_df.loc[reindexed_ratings_df.loc[x].userId].gender)
-    obs_group_1_avg_item_rating_dataframe = ratings_by_group.get_group('F').groupby('movieId').mean().loc[:, ['rating']]
+
+    obs_group_1_ratings_by_movie = ratings_by_group.get_group('F').groupby('movieId').filter(lambda x: x.shape[0] > 1).groupby('movieId')
+    obs_group_1_avg_item_rating_dataframe = obs_group_1_ratings_by_movie.mean().loc[:, ['rating']]
     obs_group_1_avg_item_rating_dataframe['group'] = 1
     obs_group_1_avg_item_rating_dataframe = obs_group_1_avg_item_rating_dataframe.set_index('group', append=True).swaplevel(i='group', j='movieId')
 
-    obs_group_2_avg_item_rating_dataframe = ratings_by_group.get_group('M').groupby('movieId').mean().loc[:, ['rating']]
+    obs_group_2_ratings_by_movie = ratings_by_group.get_group('M').groupby('movieId').filter(lambda x: x.shape[0] > 1).groupby('movieId')
+    obs_group_2_avg_item_rating_dataframe = obs_group_2_ratings_by_movie.mean().loc[:, ['rating']]
     obs_group_2_avg_item_rating_dataframe['group'] = 2
     obs_group_2_avg_item_rating_dataframe = obs_group_2_avg_item_rating_dataframe.set_index('group', append=True).swaplevel(i='group', j='movieId')
 
     obs_group_avg_item_rating_dataframe = pd.concat([obs_group_1_avg_item_rating_dataframe, obs_group_2_avg_item_rating_dataframe], axis=0)
     obs_group_avg_item_rating_dataframe = obs_group_avg_item_rating_dataframe.reindex(group_avg_item_rating_dataframe.index)
+    # obs_group_avg_item_rating_dataframe[obs_group_avg_item_rating_dataframe.rating.isna() &
+    #                                     (obs_group_avg_item_rating_dataframe.index.get_level_values(0) == 1)] = (
+    #     obs_group_avg_item_rating_dataframe.groupby(level=0).mean().loc[1, 'rating'])
     obs_group_avg_item_rating_dataframe[obs_group_avg_item_rating_dataframe.rating.isna() &
                                         (obs_group_avg_item_rating_dataframe.index.get_level_values(0) == 1)] = (
-        obs_group_avg_item_rating_dataframe.groupby(level=0).mean().loc[1, 'rating'])
+        obs_group_avg_item_rating_dataframe.loc[:, 'rating'].mean())
+    # obs_group_avg_item_rating_dataframe[obs_group_avg_item_rating_dataframe.rating.isna() &
+    #                                     (obs_group_avg_item_rating_dataframe.index.get_level_values(0) == 2)] = (
+    #     obs_group_avg_item_rating_dataframe.groupby(level=0).mean().loc[2, 'rating'])
     obs_group_avg_item_rating_dataframe[obs_group_avg_item_rating_dataframe.rating.isna() &
                                         (obs_group_avg_item_rating_dataframe.index.get_level_values(0) == 2)] = (
-        obs_group_avg_item_rating_dataframe.groupby(level=0).mean().loc[2, 'rating'])
+        obs_group_avg_item_rating_dataframe.loc[:, 'rating'].mean())
 
     write(obs_group_avg_item_rating_dataframe, 'obs_group_average_item_rating_obs', fold, phase)

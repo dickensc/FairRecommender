@@ -30,4 +30,8 @@ def sim_content_predicate(movies_df, fold='0', phase='eval'):
     item_content_similarity_block_index = pd.MultiIndex.from_arrays([item_index, flattened_frame])
     item_content_similarity_block_series = pd.Series(data=1, index=item_content_similarity_block_index)
 
+    # # populate the item_content_similarity_block_series with the similarity value
+    # for index in item_content_similarity_block_index:
+    #     item_content_similarity_block_series.loc[index] = movie_similarity_df.loc[index[0], index[1]]
+
     write(item_content_similarity_block_series, 'sim_content_items_obs', fold, phase)

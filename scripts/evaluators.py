@@ -22,6 +22,9 @@ def evaluate_mse(predicted_df, truth_df, observed_df, target_df, user_df):
     experiment_frame = truth_df.loc[evaluator_indices].join(complete_predictions, how="left",
                                                             lsuffix='_truth', rsuffix='_predicted')
 
+    print("Experiment Shape: {}".format(experiment_frame.shape))
+    print("truth_df Shape: {}".format(experiment_frame.shape))
+    print("MSE: {}".format(mean_squared_error(experiment_frame.val_truth, experiment_frame.val_predicted)))
     return mean_squared_error(experiment_frame.val_truth, experiment_frame.val_predicted)
 
 
@@ -100,6 +103,96 @@ def evaluate_roc_auc_score(predicted_df, truth_df, observed_df, target_df, user_
 
     relevant = experiment_frame.val_truth > threshold
     return roc_auc_score(relevant, experiment_frame.val_predicted)
+
+
+def evaluate_mutual_information(predicted_df, truth_df, observed_df, target_df, user_df):
+    # MOVIELENS SPECIFIC
+    # difference between overall average ratings across groups
+    # consider overlap between observed and truths if there is observed truths
+    complete_predictions = observed_df.append(predicted_df)
+    complete_predictions = complete_predictions.loc[~complete_predictions.index.duplicated(keep='first')]
+
+    # evaluator indices
+    evaluator_indices = truth_df.index.intersection(target_df.index)
+
+    # Join predicted_df and truth_df on the arguments
+    experiment_frame = truth_df.loc[evaluator_indices].join(complete_predictions, how="left",
+                                                            lsuffix='_truth', rsuffix='_predicted')
+
+    # Group experiment frames
+    group1_index = user_df.index[user_df.gender == "F"]
+    group_1_experiment_frame = experiment_frame.loc[group1_index]
+
+    group2_index = user_df.index[user_df.gender == "M"]
+    group_2_experiment_frame = experiment_frame.loc[group2_index]
+
+    # Mutual Information
+    n_users = group1_index.shape[0] + group2_index.shape[0]
+    attribute_probability = {"F": group1_index.shape[0] / n_users,
+                             "M": group2_index.shape[0] / n_users}
+
+    attribute_conditioned_rating_probabilities = {}
+    rating_probabilities = {}
+    for movie_id in experiment_frame.index.get_level_values(1).unique():
+        if movie_id in group_1_experiment_frame.index.get_level_values(1):
+            female_conditioned_rating_probability = group_1_experiment_frame.swaplevel(0, 1).loc[movie_id].val_predicted.mean()
+        else:
+            female_conditioned_rating_probability = 0
+
+        if movie_id in group_2_experiment_frame.index.get_level_values(1):
+            male_conditioned_rating_probability = group_2_experiment_frame.swaplevel(0, 1).loc[movie_id].val_predicted.mean()
+        else:
+            male_conditioned_rating_probability = 0
+
+        attribute_conditioned_rating_probabilities[movie_id] = {"F": female_conditioned_rating_probability,
+                                                                "M": male_conditioned_rating_probability}
+        rating_probabilities[movie_id] = experiment_frame.swaplevel(0, 1).loc[movie_id].val_predicted.mean()
+
+    mutual_information = 0
+    for movie_id in experiment_frame.index.get_level_values(1).unique():
+        # rating = 1 term
+        if (attribute_conditioned_rating_probabilities[movie_id]["F"] != 0) and (rating_probabilities[movie_id] != 0):
+            mutual_information += (attribute_probability["F"] * attribute_conditioned_rating_probabilities[movie_id]["F"] *
+                                   np.log2(attribute_conditioned_rating_probabilities[movie_id]["F"] / rating_probabilities[movie_id]))
+        elif (attribute_conditioned_rating_probabilities[movie_id]["F"] == 0) and (rating_probabilities[movie_id] == 0):
+            mutual_information += 0
+        elif attribute_conditioned_rating_probabilities[movie_id]["F"] == 0:
+            mutual_information += 0
+        elif rating_probabilities[movie_id]["F"] == 0:
+            raise ValueError
+
+        if (attribute_conditioned_rating_probabilities[movie_id]["M"] != 0) and (rating_probabilities[movie_id] != 0):
+            mutual_information += (attribute_probability["M"] * attribute_conditioned_rating_probabilities[movie_id]["M"] *
+                                   np.log2(attribute_conditioned_rating_probabilities[movie_id]["M"] / rating_probabilities[movie_id]))
+        elif (attribute_conditioned_rating_probabilities[movie_id]["M"] == 0) and (rating_probabilities[movie_id] == 0):
+            mutual_information += 0
+        elif attribute_conditioned_rating_probabilities[movie_id]["M"] == 0:
+            mutual_information += 0
+        elif rating_probabilities[movie_id]["M"] == 0:
+            raise ValueError
+
+        # rating = 0 term
+        if (1 - attribute_conditioned_rating_probabilities[movie_id]["F"] != 0) and (1 - rating_probabilities[movie_id] != 0):
+            mutual_information += (attribute_probability["F"] * (1 - attribute_conditioned_rating_probabilities[movie_id]["F"]) *
+                                   np.log2((1 - attribute_conditioned_rating_probabilities[movie_id]["F"]) / (1 - rating_probabilities[movie_id])))
+        elif (1 - attribute_conditioned_rating_probabilities[movie_id]["F"] == 0) and (1 - rating_probabilities[movie_id] == 0):
+            mutual_information += 0
+        elif 1 - attribute_conditioned_rating_probabilities[movie_id]["F"] == 0:
+            mutual_information += 0
+        elif 1 - rating_probabilities[movie_id]["F"] == 0:
+            raise ValueError
+
+        if (1 - attribute_conditioned_rating_probabilities[movie_id]["M"] != 0) and (1 - rating_probabilities[movie_id] != 0):
+            mutual_information += (attribute_probability["M"] * (1 - attribute_conditioned_rating_probabilities[movie_id]["M"]) *
+                                   np.log2((1 - attribute_conditioned_rating_probabilities[movie_id]["M"]) / (1 - rating_probabilities[movie_id])))
+        elif (1 - attribute_conditioned_rating_probabilities[movie_id]["M"] == 0) and (1 - rating_probabilities[movie_id] == 0):
+            mutual_information += 0
+        elif 1 - attribute_conditioned_rating_probabilities[movie_id]["M"] == 0:
+            mutual_information += 0
+        elif 1 - rating_probabilities[movie_id]["M"] == 0:
+            raise ValueError
+
+    return mutual_information / experiment_frame.index.get_level_values(1).unique().shape[0]
 
 
 def evaluate_non_parity(predicted_df, truth_df, observed_df, target_df, user_df):

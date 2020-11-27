@@ -21,6 +21,7 @@ from evaluators import evaluate_value
 from evaluators import evaluate_over_estimation
 from evaluators import evaluate_under_estimation
 from evaluators import evaluate_absolute
+from evaluators import evaluate_mutual_information
 
 # DATASET_PROPERTIES = {
 #     'movielens': {'evaluation_predicate': 'rating'},
@@ -48,7 +49,8 @@ FAIRNESS_NAME_TO_EVALUATOR = {
     'value': evaluate_value,
     'over_estimation': evaluate_over_estimation,
     'under_estimation': evaluate_under_estimation,
-    'absolute': evaluate_absolute
+    'absolute': evaluate_absolute,
+    'mutual_information': evaluate_mutual_information
 }
 
 PERFORMANCE_COLUMNS = ['Dataset', 'Wl_Method', 'Fairness_Model', 'Fairness_Regularizer', 'Evaluation_Method', 'Evaluator_Mean', 'Evaluator_Standard_Deviation']
@@ -145,25 +147,16 @@ def calculate_experiment_performance(method, dataset, wl_method, evaluator, fold
         # TODO (Charles) : assumes every dataset in this experiment infrastructure has a user frame
         user_df = FRAME_LOADER.load_user_frame(dataset)
 
-        experiment_performance = np.append(experiment_performance,
-                                           EVALUATOR_NAME_TO_METHOD[evaluator](predicted_df,
-                                                                               truth_df,
-                                                                               observed_df,
-                                                                               target_df,
-                                                                               user_df))
+        experiment_performance = np.append(experiment_performance, EVALUATOR_NAME_TO_METHOD[evaluator](
+            predicted_df, truth_df, observed_df, target_df, user_df))
 
         for metric in FAIRNESS_NAME_TO_EVALUATOR.keys():
-            experiment_fairness[metric] = np.append(experiment_fairness[metric],
-                                                    FAIRNESS_NAME_TO_EVALUATOR[metric](predicted_df,
-                                                                                       truth_df,
-                                                                                       observed_df,
-                                                                                       target_df,
-                                                                                       user_df))
+            experiment_fairness[metric] = np.append(experiment_fairness[metric], FAIRNESS_NAME_TO_EVALUATOR[metric](
+                predicted_df, truth_df, observed_df, target_df, user_df))
 
     # organize into a performance_series
     # TODO(Charles): *5 is for movielens
-    performance_series = pd.Series(index=PERFORMANCE_COLUMNS,
-                                   dtype=float)
+    performance_series = pd.Series(index=PERFORMANCE_COLUMNS, dtype=float)
     performance_series['Dataset'] = dataset
     performance_series['Wl_Method'] = wl_method
     performance_series['Fairness_Model'] = model
@@ -172,8 +165,12 @@ def calculate_experiment_performance(method, dataset, wl_method, evaluator, fold
     performance_series['Evaluator_Mean'] = experiment_performance.mean() * 5
     performance_series['Evaluator_Standard_Deviation'] = experiment_performance.std() * 5
     for metric in FAIRNESS_NAME_TO_EVALUATOR.keys():
-        performance_series[metric + '_Mean'] = experiment_fairness[metric].mean() * 5
-        performance_series[metric + '_Standard_Deviation'] = experiment_fairness[metric].std() * 5
+        if (metric != 'mutual_information'):
+            performance_series[metric + '_Mean'] = experiment_fairness[metric].mean() * 5
+            performance_series[metric + '_Standard_Deviation'] = experiment_fairness[metric].std() * 5
+        else:
+            performance_series[metric + '_Mean'] = experiment_fairness[metric].mean()
+            performance_series[metric + '_Standard_Deviation'] = experiment_fairness[metric].std()
 
     return performance_series
 

@@ -18,6 +18,8 @@ readonly POSTGRES_DB='psl'
 readonly STANDARD_PSL_OPTIONS="--postgres ${POSTGRES_DB}"
 # Random Seed option
 readonly WEIGHT_LEARNING_SEED='-D random.seed='
+# Inference reasoner
+readonly WEIGHT_LEARNING_INFERENCE='-D weightlearning.inference=SGDInference'
 
 # The weight learning classes for each method
 declare -A WEIGHT_LEARNING_METHODS
@@ -188,9 +190,10 @@ function write_uniform_learned_psl_file() {
     pushd . > /dev/null
         cd "${example_directory}/cli" || exit
 
-        # set the weights in the learned file to 1 and write to learned.psl file
-        sed -r "s/^[0-9]+.[0-9]+ :|^[0-9]+ :/1.0 :/g"  "${example_name}.psl" > "${example_name}-learned.psl"
+#        # set the weights in the learned file to 1 and write to learned.psl file
+#        sed -r "s/^[0-9]+.[0-9]+ :|^[0-9]+ :/1.0 :/g"  "${example_name}.psl" > "${example_name}-learned.psl"
 
+        cp "${example_name}.psl" "${example_name}-learned.psl"
     popd > /dev/null
 }
 
@@ -222,7 +225,7 @@ function modify_run_script_options() {
         cd "${example_directory}/cli" || exit
 
         # set the ADDITIONAL_LEARN_OPTIONS
-        sed -i "s/^readonly ADDITIONAL_LEARN_OPTIONS='.*'$/readonly ADDITIONAL_LEARN_OPTIONS='${WEIGHT_LEARNING_METHODS[${wl_method}]} ${WEIGHT_LEARNING_SEED}${seed} ${WEIGHT_LEARNING_METHOD_OPTIONS[${wl_method}]} -D log4j.threshold=${trace_level} ${EXAMPLE_OPTIONS[${example_name}]} ${evaluator_options} ${search_options}'/" run.sh
+        sed -i "s/^readonly ADDITIONAL_LEARN_OPTIONS='.*'$/readonly ADDITIONAL_LEARN_OPTIONS='${WEIGHT_LEARNING_METHODS[${wl_method}]} ${WEIGHT_LEARNING_INFERENCE} ${WEIGHT_LEARNING_SEED}${seed} ${WEIGHT_LEARNING_METHOD_OPTIONS[${wl_method}]} -D log4j.threshold=${trace_level} ${EXAMPLE_OPTIONS[${example_name}]} ${evaluator_options} ${search_options}'/" run.sh
 
         # set the ADDITIONAL_PSL_OPTIONS
         sed -i "s/^readonly ADDITIONAL_PSL_OPTIONS='.*'$/readonly ADDITIONAL_PSL_OPTIONS='${int_ids_options} ${STANDARD_PSL_OPTIONS}'/" run.sh

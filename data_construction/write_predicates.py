@@ -87,6 +87,7 @@ def construct_movielens_predicates():
                          user_df, movies_df, 'learn', fold)
 
         print("Fold: {} eval predicates".format(fold))
+        print("Test Size: {}".format(test_ratings_df.shape[0]))
         # Eval
         write_predicates(observed_ratings_df.append(train_ratings_df, verify_integrity=True), test_ratings_df,
                          user_df, movies_df, 'eval', fold)
@@ -100,54 +101,54 @@ def write_predicates(observed_ratings_df, truth_ratings_df, user_df, movies_df, 
     movies_df = movies_df.loc[movies]
     user_df = user_df.loc[users]
 
-    # Base model predicates
-    ratings_predicate(observed_ratings_df, partition='obs', fold=str(fold), phase=phase)
-    ratings_predicate(truth_ratings_df, partition='targets', fold=str(fold), phase=phase, write_value=False)
-    ratings_predicate(truth_ratings_df, partition='truth', fold=str(fold), phase=phase, write_value=True)
-
-    nmf_ratings_predicate(observed_ratings_df, truth_ratings_df, fold=str(fold), phase=phase)
-    svd_ratings_predicate(observed_ratings_df, truth_ratings_df, fold=str(fold), phase=phase)
-    nb_ratings_predicate(observed_ratings_df, truth_ratings_df, user_df, movies_df, fold=str(fold), phase=phase)
-
-    average_item_rating_predicate(observed_ratings_df, fold=str(fold), phase=phase)
-    average_user_rating_predicate(observed_ratings_df, fold=str(fold), phase=phase)
+    # # Base model predicates
+    # ratings_predicate(observed_ratings_df, partition='obs', fold=str(fold), phase=phase)
+    # ratings_predicate(truth_ratings_df, partition='targets', fold=str(fold), phase=phase, write_value=False)
+    # ratings_predicate(truth_ratings_df, partition='truth', fold=str(fold), phase=phase, write_value=True)
+    #
+    # nmf_ratings_predicate(observed_ratings_df, truth_ratings_df, fold=str(fold), phase=phase)
+    # svd_ratings_predicate(observed_ratings_df, truth_ratings_df, fold=str(fold), phase=phase)
+    # nb_ratings_predicate(observed_ratings_df, truth_ratings_df, user_df, movies_df, fold=str(fold), phase=phase)
+    #
+    # average_item_rating_predicate(observed_ratings_df, fold=str(fold), phase=phase)
+    # average_user_rating_predicate(observed_ratings_df, fold=str(fold), phase=phase)
 
     sim_content_predicate(movies_df, fold=str(fold), phase=phase)
     sim_demo_users_predicate(user_df, fold=str(fold), phase=phase)
     sim_items_predicate(observed_ratings_df, movies, fold=str(fold), phase=phase)
     sim_users_predicate(observed_ratings_df, users, fold=str(fold), phase=phase)
 
-    item_predicate(observed_ratings_df, truth_ratings_df, fold=str(fold), phase=phase)
-    user_predicate(observed_ratings_df, truth_ratings_df, fold=str(fold), phase=phase)
-    rated_predicate(observed_ratings_df, truth_ratings_df, fold=str(fold), phase=phase)
-    target_predicate(truth_ratings_df, fold=str(fold), phase=phase)
+    # item_predicate(observed_ratings_df, truth_ratings_df, fold=str(fold), phase=phase)
+    # user_predicate(observed_ratings_df, truth_ratings_df, fold=str(fold), phase=phase)
+    # rated_predicate(observed_ratings_df, truth_ratings_df, fold=str(fold), phase=phase)
+    # target_predicate(truth_ratings_df, fold=str(fold), phase=phase)
 
-    # fairness intervention predicates
-    group_predicate(user_df, fold=str(fold), phase=phase)
-    constant_predicate(fold=str(fold), phase=phase)
-    negative_prior(fold=str(fold), phase=phase)
-    positive_prior(fold=str(fold), phase=phase)
-    group_member_predicate(user_df, fold=str(fold), phase=phase)
-    group_1(user_df, fold=str(fold), phase=phase)
-    group_2(user_df, fold=str(fold), phase=phase)
-    group1_avg_rating_predicate(fold=str(fold), phase=phase)
-    group2_avg_rating_predicate(fold=str(fold), phase=phase)
-    group_average_item_rating_predicate(observed_ratings_df, user_df, movies_df, fold=str(fold), phase=phase)
-    group_average_rating_predicate(user_df, fold=str(fold), phase=phase)
-    group_item_block_predicate(user_df, truth_ratings_df, fold=str(fold), phase=phase)
-    group_denominators(user_df, truth_ratings_df, fold=str(fold), phase=phase)
-
-    # fair psl predicates
-    group1_item_rating_predicate(movies_df, fold=str(fold), phase=phase)
-    group2_item_rating_predicate(movies_df, fold=str(fold), phase=phase)
-    group1_genre_rating_predicate(movies_df, fold=str(fold), phase=phase)
-    group2_genre_rating_predicate(movies_df, fold=str(fold), phase=phase)
-    is_genre_predicate(movies_df, fold=str(fold), phase=phase)
-
-    # Matrix factorization predicates
-    group_member_mf(user_df, fold=str(fold), phase=phase)
-    ratings_mf(observed_ratings_df, partition='obs', fold=str(fold), phase=phase)
-    ratings_mf(truth_ratings_df, partition='truth', fold=str(fold), phase=phase)
+    # # fairness intervention predicates
+    # group_predicate(user_df, fold=str(fold), phase=phase)
+    # constant_predicate(fold=str(fold), phase=phase)
+    # negative_prior(fold=str(fold), phase=phase)
+    # positive_prior(fold=str(fold), phase=phase)
+    # group_member_predicate(user_df, fold=str(fold), phase=phase)
+    # group_1(user_df, fold=str(fold), phase=phase)
+    # group_2(user_df, fold=str(fold), phase=phase)
+    # group1_avg_rating_predicate(fold=str(fold), phase=phase)
+    # group2_avg_rating_predicate(fold=str(fold), phase=phase)
+    # group_average_item_rating_predicate(observed_ratings_df, user_df, movies_df, fold=str(fold), phase=phase)
+    # group_average_rating_predicate(user_df, fold=str(fold), phase=phase)
+    # group_item_block_predicate(user_df, truth_ratings_df, fold=str(fold), phase=phase)
+    # group_denominators(user_df, truth_ratings_df, fold=str(fold), phase=phase)
+    #
+    # # fair psl predicates
+    # group1_item_rating_predicate(movies_df, fold=str(fold), phase=phase)
+    # group2_item_rating_predicate(movies_df, fold=str(fold), phase=phase)
+    # group1_genre_rating_predicate(movies_df, fold=str(fold), phase=phase)
+    # group2_genre_rating_predicate(movies_df, fold=str(fold), phase=phase)
+    # is_genre_predicate(movies_df, fold=str(fold), phase=phase)
+    #
+    # # Matrix factorization predicates
+    # group_member_mf(user_df, fold=str(fold), phase=phase)
+    # ratings_mf(observed_ratings_df, partition='obs', fold=str(fold), phase=phase)
+    # ratings_mf(truth_ratings_df, partition='truth', fold=str(fold), phase=phase)
 
 
 def partition_randomly(ratings_df, n_folds, train_proportion=0.7):

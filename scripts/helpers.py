@@ -71,6 +71,7 @@ class frameLoader:
         user_path = "{}/../psl-datasets/{}/data/ml-1m/users.dat".format(dirname, dataset)
 
         if user_path in self.cached_frames:
+            print("User Frame cached: {}".format(user_path))
             return self.cached_frames[user_path]
         else:
             user_df = pd.read_csv(user_path, sep='::', header=None,
@@ -90,6 +91,7 @@ class frameLoader:
         observed_path = "{}/../psl-datasets/{}/data/{}/{}/{}/{}_obs.txt".format(dirname, dataset, dataset, fold, phase, predicate)
 
         if observed_path in self.cached_frames:
+            print("Observed Frame cached: {}".format(observed_path))
             return self.cached_frames[observed_path]
         else:
             observed_df = pd.read_csv(observed_path, sep='\t', header=None)
@@ -111,6 +113,7 @@ class frameLoader:
 
         truth_path = "{}/../psl-datasets/{}/data/{}/{}/{}/{}_truth.txt".format(dirname, dataset, dataset, fold, phase, predicate)
         if truth_path in self.cached_frames:
+            print("Truth Frame cached: {}".format(truth_path))
             return self.cached_frames[truth_path]
         else:
             truth_df = pd.read_csv(truth_path, sep='\t', header=None)
@@ -133,6 +136,7 @@ class frameLoader:
         target_path = "{}/../psl-datasets/{}/data/{}/{}/{}/{}_targets.txt".format(dirname, dataset, dataset, fold,
                                                                                   phase, predicate)
         if target_path in self.cached_frames:
+            print("Target Frame cached: {}".format(target_path))
             return self.cached_frames[target_path]
         else:
             target_df = pd.read_csv(target_path, sep='\t', header=None)

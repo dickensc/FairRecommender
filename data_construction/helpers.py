@@ -3,6 +3,7 @@ import numpy as np
 import os
 
 from sklearn.metrics import pairwise_distances
+from scipy.spatial.distance import jaccard
 
 DATA_PATH = '../psl-datasets/movielens/data/movielens/'
 
@@ -33,6 +34,23 @@ def query_relevance_cosine_similarity(relevance_df, query_index, item_index, fil
                                                  index=query_relevance_frame.index, columns=query_relevance_frame.index)
 
     return (1 - query_cosine_distance_frame).stack()
+
+
+def query_relevance_jaccard_similarity(relevance_df, query_index, item_index):
+    """
+    Builds query similarity predicate from a ratings data frame.
+    :param relevance_df: A dataframe with a query, item and relevance column fields
+    :param query_index: name of query field
+    :param item_index: name of item field
+    :return: multi index (query_id, item_id) Series
+    """
+    query_relevance_frame = relevance_df.set_index([query_index, item_index]).unstack().fillna(0) > 0
+
+    query_jaccard_distance_frame = pd.DataFrame(pairwise_distances(query_relevance_frame, metric=jaccard,
+                                                                  force_all_finite='allow-nan'),
+                                               index=query_relevance_frame.index, columns=query_relevance_frame.index)
+
+    return (1 - query_jaccard_distance_frame).stack()
 
 
 def cosine_distance_frame_from_relevance(data_frame, fill=True):
