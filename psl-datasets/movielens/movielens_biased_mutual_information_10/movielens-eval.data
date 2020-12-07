@@ -10,6 +10,7 @@ predicates:
     avg_user_rating/1: closed
     rated/2: closed
     rating/2: open
+    group_member/2: closed
     nmf_rating/2: closed
     svd_rating/2: closed
     nb_rating/2: closed
@@ -19,6 +20,7 @@ observations:
     target: ../data/movielens/0/eval/target_obs.txt
     item: ../data/movielens/0/eval/item_obs.txt
     rated: ../data/movielens/0/eval/rated_obs.txt
+    group_member: ../data/movielens/0/eval/group_member_obs.txt
 
     sim_content_items: ../data/movielens/0/eval/sim_content_items_obs.txt
     sim_demo_users: ../data/movielens/0/eval/sim_demo_users_obs.txt
@@ -35,7 +37,7 @@ observations:
     rating: ../data/movielens/0/eval/rating_obs.txt
 
 targets:
-   rating: ../data/movielens/0/eval/rating_targets.txt
+    rating: ../data/movielens/0/eval/rating_targets.txt
 
 truth:
-   rating: ../data/movielens/0/eval/rating_truth.txt
+    rating: ../data/movielens/0/eval/rating_truth.txt

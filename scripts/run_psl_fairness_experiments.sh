@@ -10,14 +10,14 @@ readonly BASE_OUT_DIR="${BASE_DIR}/results/fairness"
 readonly STUDY_NAME='fairness_study'
 
 #readonly FAIRNESS_MODELS='base non_parity value non_parity_value nb nmf non_parity_nmf_retro_fit value_nmf_retro_fit mutual_information'
-readonly FAIRNESS_MODELS='mutual_information'
+readonly FAIRNESS_MODELS='base mutual_information mutual_information_001 mutual_information_01 mutual_information_1 mutual_information_10 mutual_information_100 mutual_information_1000 mutual_information_10000 mutual_information_100000'
 readonly FAIRNESS_WEIGHTS='LEARNED 0.00001 0.0001 0.001 0.01 0.1 1.0 10.0 100.0 1000.0 10000.0'
 readonly WL_METHODS='UNIFORM'
 readonly SEED=4
 readonly TRACE_LEVEL='TRACE'
 
 readonly SUPPORTED_DATASETS='movielens'
-readonly SUPPORTED_FAIRNESS_MODELS='base non_parity value non_parity_value nmf nb non_parity_nmf_retro_fit value_nmf_retro_fit mutual_information'
+readonly SUPPORTED_FAIRNESS_MODELS='base non_parity value non_parity_value nmf nb non_parity_nmf_retro_fit value_nmf_retro_fit mutual_information_001 mutual_information_1 mutual_information_10 mutual_information_100 mutual_information_1000 mutual_information_10000 mutual_information_100000 mutual_information_01'
 
 # Evaluators to be use for each example
 declare -A DATASET_EVALUATORS
@@ -31,7 +31,14 @@ SUPPORTED_FAIR_WEIGHTS[value]='LEARNED'
 SUPPORTED_FAIR_WEIGHTS[non_parity_value]='LEARNED'
 SUPPORTED_FAIR_WEIGHTS[nb]='LEARNED'
 SUPPORTED_FAIR_WEIGHTS[nmf]='LEARNED'
-SUPPORTED_FAIR_WEIGHTS[mutual_information]='LEARNED'
+SUPPORTED_FAIR_WEIGHTS[mutual_information_001]='LEARNED'
+SUPPORTED_FAIR_WEIGHTS[mutual_information_01]='LEARNED'
+SUPPORTED_FAIR_WEIGHTS[mutual_information_1]='LEARNED'
+SUPPORTED_FAIR_WEIGHTS[mutual_information_10]='LEARNED'
+SUPPORTED_FAIR_WEIGHTS[mutual_information_100]='LEARNED'
+SUPPORTED_FAIR_WEIGHTS[mutual_information_1000]='LEARNED'
+SUPPORTED_FAIR_WEIGHTS[mutual_information_10000]='LEARNED'
+SUPPORTED_FAIR_WEIGHTS[mutual_information_100000]='LEARNED'
 SUPPORTED_FAIR_WEIGHTS[non_parity_nmf_retro_fit]='0.01 0.1 1.0 10.0 100.0 1000.0 10000.0'
 SUPPORTED_FAIR_WEIGHTS[value_nmf_retro_fit]='0.00001 0.0001 0.001 0.01 0.1 1.0 10.0'
 

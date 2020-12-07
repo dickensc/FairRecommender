@@ -24,6 +24,25 @@ EXAMPLE_OPTIONS[epinions]=''
 EXAMPLE_OPTIONS[jester]=''
 EXAMPLE_OPTIONS[lastfm]=''
 
+# Options specific to each model (missing keys yield empty strings).
+declare -A MODEL_OPTIONS
+MODEL_OPTIONS[base]='-D sgd.learningrate=1.0 -D sgd.maxiterations=500'
+MODEL_OPTIONS[non_parity]='-D sgd.learningrate=1000.0 -D sgd.maxiterations=500'
+MODEL_OPTIONS[value]='-D sgd.learningrate=1000.0 -D sgd.maxiterations=500'
+MODEL_OPTIONS[non_parity_value]='-D sgd.learningrate=1000.0 -D sgd.maxiterations=500'
+MODEL_OPTIONS[nb]='-D sgd.learningrate=1000.0 -D sgd.maxiterations=500'
+MODEL_OPTIONS[nmf]='-D sgd.learningrate=1000.0 -D sgd.maxiterations=500'
+MODEL_OPTIONS[mutual_information_001]='-D sgd.learningrate=10.0 -D sgd.maxiterations=500'
+MODEL_OPTIONS[mutual_information_01]='-D sgd.learningrate=10.0 -D sgd.maxiterations=500'
+MODEL_OPTIONS[mutual_information_1]='-D sgd.learningrate=10.0 -D sgd.maxiterations=500'
+MODEL_OPTIONS[mutual_information_10]='-D sgd.learningrate=100.0 -D sgd.maxiterations=500'
+MODEL_OPTIONS[mutual_information_100]='-D sgd.learningrate=100.0 -D sgd.maxiterations=500'
+MODEL_OPTIONS[mutual_information_1000]='-D sgd.learningrate=100.0 -D sgd.maxiterations=500'
+MODEL_OPTIONS[mutual_information_10000]='-D sgd.learningrate=1000.0 -D sgd.maxiterations=500'
+MODEL_OPTIONS[mutual_information_100000]='-D sgd.learningrate=1000.0 -D sgd.maxiterations=500'
+MODEL_OPTIONS[non_parity_nmf_retro_fit]='-D sgd.learningrate=1000.0 -D sgd.maxiterations=500'
+MODEL_OPTIONS[value_nmf_retro_fit]='-D sgd.learningrate=1000.0 -D sgd.maxiterations=500'
+
 readonly PSL_VERSION='2.3.0-SNAPSHOT'
 
 function run() {
@@ -164,7 +183,7 @@ function modify_run_script_options() {
         sed -i "s/^readonly ADDITIONAL_PSL_OPTIONS='.*'$/readonly ADDITIONAL_PSL_OPTIONS='${int_ids_options} ${STANDARD_PSL_OPTIONS}'/" run.sh
 
         # set the ADDITIONAL_EVAL_OPTIONS
-        sed -i "s/^readonly ADDITIONAL_EVAL_OPTIONS='.*'$/readonly ADDITIONAL_EVAL_OPTIONS='--infer SGDInference --eval org.linqs.psl.evaluation.statistics.${objective}Evaluator ${EXAMPLE_OPTIONS[${example_name}]}'/" run.sh
+        sed -i "s/^readonly ADDITIONAL_EVAL_OPTIONS='.*'$/readonly ADDITIONAL_EVAL_OPTIONS='--infer SGDInference ${MODEL_OPTIONS[${fairness_model}]} --eval org.linqs.psl.evaluation.statistics.${objective}Evaluator ${EXAMPLE_OPTIONS[${example_name}]}'/" run.sh
     popd > /dev/null
 }
 

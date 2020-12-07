@@ -29,3 +29,6 @@
 // Priors
 1.0 : rating(U, I) = 1.0 ^2
 1.0 : ~rating(U, I) ^2
+
+// Mutual Information Fairness Regularizer
+0.1 : @MI[rating(+U1, I), group_member(+U2, +G)] {U1: rated(U1, I)}

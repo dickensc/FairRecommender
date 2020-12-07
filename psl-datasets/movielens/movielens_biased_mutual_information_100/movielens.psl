@@ -1,0 +1,6 @@
+// Biased ratings predictions
+1.0 : target(U, I) & group_member(U, '1') >> rating(U, I)
+1.0 : target(U, I) & group_member(U, '2') >> !rating(U, I)
+
+// Mutual Information Fairness Regularizer
+100.0 : @MI[rating(+U1, I), group_member(+U2, +G)] {U1: rated(U1, I)}

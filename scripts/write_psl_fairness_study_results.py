@@ -23,16 +23,6 @@ from evaluators import evaluate_under_estimation
 from evaluators import evaluate_absolute
 from evaluators import evaluate_mutual_information
 
-# DATASET_PROPERTIES = {
-#     'movielens': {'evaluation_predicate': 'rating'},
-#     'movielens_non_parity': {'evaluation_predicate': 'rating'},
-#     'movielens_value': {'evaluation_predicate': 'rating'},
-#     'movielens_FairPSL': {'evaluation_predicate': 'rating'},
-#     'movielens_nmf': {'evaluation_predicate': 'rating'},
-#     'movielens_non_parity_nmf_retro_fit': {'evaluation_predicate': 'rating'},
-#     'movielens_value_nmf_retro_fit': {'evaluation_predicate': 'rating'}
-# }
-
 DATASET_PROPERTIES = {
     'movielens': {'evaluation_predicate': 'rating'}
 }
@@ -47,9 +37,9 @@ EVALUATOR_NAME_TO_METHOD = {
 FAIRNESS_NAME_TO_EVALUATOR = {
     'non_parity': evaluate_non_parity,
     'value': evaluate_value,
-    'over_estimation': evaluate_over_estimation,
-    'under_estimation': evaluate_under_estimation,
-    'absolute': evaluate_absolute,
+    # 'over_estimation': evaluate_over_estimation,
+    # 'under_estimation': evaluate_under_estimation,
+    # 'absolute': evaluate_absolute,
     'mutual_information': evaluate_mutual_information
 }
 
