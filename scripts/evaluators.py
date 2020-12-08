@@ -154,8 +154,6 @@ def evaluate_mutual_information(predicted_df, truth_df, observed_df, target_df, 
 
         rating_probabilities[movie_id] = experiment_frame.swaplevel(0, 1).loc[movie_id].val_predicted.mean()
 
-    print(attribute_conditioned_rating_probabilities)
-
     mutual_information = 0
     for movie_id in experiment_frame.index.get_level_values(1).unique():
         for attribute in attribute_conditioned_rating_probabilities[movie_id].keys():
