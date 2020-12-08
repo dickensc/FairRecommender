@@ -10,14 +10,14 @@ readonly BASE_OUT_DIR="${BASE_DIR}/results/fairness"
 readonly STUDY_NAME='fairness_study'
 
 #readonly FAIRNESS_MODELS='base non_parity value non_parity_value nb nmf non_parity_nmf_retro_fit value_nmf_retro_fit mutual_information'
-readonly FAIRNESS_MODELS='base mutual_information mutual_information_001 mutual_information_01 mutual_information_1 mutual_information_10 mutual_information_100 mutual_information_1000 mutual_information_10000 mutual_information_100000'
-readonly FAIRNESS_WEIGHTS='LEARNED 0.00001 0.0001 0.001 0.01 0.1 1.0 10.0 100.0 1000.0 10000.0'
+readonly FAIRNESS_MODELS='mutual_information'
+readonly FAIRNESS_WEIGHTS='LEARNED 0.00001 0.0001 0.001 0.01 0.1 1.0 10.0 100.0 1000.0 10000.0 100000.0'
 readonly WL_METHODS='UNIFORM'
 readonly SEED=4
 readonly TRACE_LEVEL='TRACE'
 
 readonly SUPPORTED_DATASETS='movielens'
-readonly SUPPORTED_FAIRNESS_MODELS='base non_parity value non_parity_value nmf nb non_parity_nmf_retro_fit value_nmf_retro_fit mutual_information_001 mutual_information_1 mutual_information_10 mutual_information_100 mutual_information_1000 mutual_information_10000 mutual_information_100000 mutual_information_01'
+readonly SUPPORTED_FAIRNESS_MODELS='base non_parity value non_parity_value nmf nb non_parity_nmf_retro_fit value_nmf_retro_fit mutual_information'
 
 # Evaluators to be use for each example
 declare -A DATASET_EVALUATORS
@@ -31,16 +31,25 @@ SUPPORTED_FAIR_WEIGHTS[value]='LEARNED'
 SUPPORTED_FAIR_WEIGHTS[non_parity_value]='LEARNED'
 SUPPORTED_FAIR_WEIGHTS[nb]='LEARNED'
 SUPPORTED_FAIR_WEIGHTS[nmf]='LEARNED'
-SUPPORTED_FAIR_WEIGHTS[mutual_information_001]='LEARNED'
-SUPPORTED_FAIR_WEIGHTS[mutual_information_01]='LEARNED'
-SUPPORTED_FAIR_WEIGHTS[mutual_information_1]='LEARNED'
-SUPPORTED_FAIR_WEIGHTS[mutual_information_10]='LEARNED'
-SUPPORTED_FAIR_WEIGHTS[mutual_information_100]='LEARNED'
-SUPPORTED_FAIR_WEIGHTS[mutual_information_1000]='LEARNED'
-SUPPORTED_FAIR_WEIGHTS[mutual_information_10000]='LEARNED'
-SUPPORTED_FAIR_WEIGHTS[mutual_information_100000]='LEARNED'
+SUPPORTED_FAIR_WEIGHTS[mutual_information]='0.01 0.1 1.0 10.0 100.0 1000.0 10000.0 10000.0 100000.0 1000000.0'
 SUPPORTED_FAIR_WEIGHTS[non_parity_nmf_retro_fit]='0.01 0.1 1.0 10.0 100.0 1000.0 10000.0'
 SUPPORTED_FAIR_WEIGHTS[value_nmf_retro_fit]='0.00001 0.0001 0.001 0.01 0.1 1.0 10.0'
+
+# Fair weight learning rate
+declare -A LEARNING_RATES
+LEARNING_RATES['LEARNED']='-D sgd.learningrate=1.0'
+LEARNING_RATES['0.00001']='-D sgd.learningrate=1.0'
+LEARNING_RATES['0.0001']='-D sgd.learningrate=1.0'
+LEARNING_RATES['0.001']='-D sgd.learningrate=1.0'
+LEARNING_RATES['0.01']='-D sgd.learningrate=10.0'
+LEARNING_RATES['0.1']='-D sgd.learningrate=10.0'
+LEARNING_RATES['1.0']='-D sgd.learningrate=10.0'
+LEARNING_RATES['10.0']='-D sgd.learningrate=100.0'
+LEARNING_RATES['100.0']='-D sgd.learningrate=100.0'
+LEARNING_RATES['1000.0']='-D sgd.learningrate=100.0'
+LEARNING_RATES['10000.0']='-D sgd.learningrate=1000.0'
+LEARNING_RATES['100000.0']='-D sgd.learningrate=1000.0'
+LEARNING_RATES['1000000.0']='-D sgd.learningrate=1000.0'
 
 # Evaluators to be use for each example
 # todo: (Charles D.) just read this information from psl example data directory rather than hardcoding
@@ -73,7 +82,7 @@ function run_example() {
     run_weight_learning "${example_name}" "${evaluator}" "${wl_method}" "${fairness_model}" "${fair_weight}" "${fold}" "${cli_directory}" "${out_directory}"
 
     ##### EVALUATION #####
-    run_evaluation "${example_name}" "${evaluator}" "${fairness_model}" "${fold}" "${out_directory}"
+    run_evaluation "${example_name}" "${evaluator}" "${fairness_model}" "${fair_weight}" "${fold}" "${out_directory}"
 
     return 0
 }
@@ -100,8 +109,9 @@ function run_evaluation() {
     local example_name=$1
     local evaluator=$2
     local fairness_model=$3
-    local fold=$4
-    local out_directory=$5
+    local fairness_weight=$4
+    local fold=$5
+    local out_directory=$6
 
     # path to output files
     local out_path="${out_directory}/eval_out.txt"
@@ -114,7 +124,7 @@ function run_evaluation() {
         # call inference script for SRL model type
         pushd . > /dev/null
             cd "psl_scripts" || exit
-            ./run_inference.sh "${example_name}" "${evaluator}" "${fairness_model}" "${fold}" "${out_directory}" > "$out_path" 2> "$err_path"
+            ./run_inference.sh "${example_name}" "${evaluator}" "${fairness_model}" "${fold}" "${out_directory}" "${LEARNING_RATES[${fairness_weight}]}"> "$out_path" 2> "$err_path"
         popd > /dev/null
     fi
 }
@@ -187,9 +197,10 @@ function write_fairness_weight() {
             elif [[ ${fairness_model} == 'non_parity_value' ]]; then
               rule="group1_avg_rating\(c\) = group2_avg_rating\(c\)"
               rule="pred_group_average_item_rating\(G1, I\) - obs_group_average_item_rating\(G1, I\) = pred_group_average_item_rating\(G2, I\) - obs_group_average_item_rating\(G2, I\)"
+            elif [[ ${fairness_model} == 'mutual_information' ]]; then
+              rule="@MI\[rating\(\+U1, I\), group_member\(\+U2, \+G\)\] \{U1: rated\(U1, I\)\}"
             fi
-
-            sed -i -r "s/^[0-9]+.[0-9]+ : ${rule}|^[0-9]+ : ${rule}/${fairness_weight}: ${rule}/g"  "${example_name}-learned.psl"
+            sed -i -r "s/^[0-9]+.[0-9]+ : ${rule}|^[0-9]+ : ${rule}/${fairness_weight} : ${rule}/g"  "${example_name}-learned.psl"
           else
             if [[ ${fairness_model} == 'non_parity' || ${fairness_model} == 'non_parity_nmf_retro_fit' ]]; then
               rule="1.0 \* GROUP1_AVG_RATING\(c\) \+ -1.0 \* GROUP2_AVG_RATING\(c\) = 0.0"
@@ -198,9 +209,11 @@ function write_fairness_weight() {
             elif [[ ${fairness_model} == 'non_parity_value' ]]; then
               rule="group1_avg_rating\(c\) = group2_avg_rating\(c\)"
               rule="pred_group_average_item_rating\(G1, I\) - obs_group_average_item_rating\(G1, I\) = pred_group_average_item_rating\(G2, I\) - obs_group_average_item_rating\(G2, I\)"
+            elif [[ ${fairness_model} == 'mutual_information' ]]; then
+              rule="@MI\[rating\(\+U1, I\), group_member\(\+U2, \+G\)\] \{U1: rated\(U1, I\)\}"
             fi
 
-            sed -i -r "s/^[0-9]+.[0-9]+: ${rule}|^[0-9]+: ${rule}/${fairness_weight}: ${rule}/g"  "${example_name}-learned.psl"
+            sed -i -r "s/^[0-9]+.[0-9]+ : ${rule}|^[0-9]+ : ${rule}/${fairness_weight} : ${rule}/g"  "${example_name}-learned.psl"
           fi
         fi
 

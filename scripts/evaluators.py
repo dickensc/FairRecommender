@@ -156,28 +156,47 @@ def evaluate_mutual_information(predicted_df, truth_df, observed_df, target_df, 
 
     mutual_information = 0
     for movie_id in experiment_frame.index.get_level_values(1).unique():
+        movie_mutual_information = 0
+        attribute_entropy = 0
         for attribute in attribute_conditioned_rating_probabilities[movie_id].keys():
+            # attribute entropy
+            attribute_entropy -= attribute_probability[movie_id][attribute] * np.log2(attribute_probability[movie_id][attribute])
+
+            # mutual information
             # rating = 1 term
             if (attribute_conditioned_rating_probabilities[movie_id][attribute] != 0) and (rating_probabilities[movie_id] != 0):
-                mutual_information += (attribute_probability[movie_id][attribute] * attribute_conditioned_rating_probabilities[movie_id][attribute] *
+                movie_mutual_information += (attribute_probability[movie_id][attribute] * attribute_conditioned_rating_probabilities[movie_id][attribute] *
                                        np.log2(attribute_conditioned_rating_probabilities[movie_id][attribute] / rating_probabilities[movie_id]))
             elif (attribute_conditioned_rating_probabilities[movie_id][attribute] == 0) and (rating_probabilities[movie_id] == 0):
-                mutual_information += 0
+                movie_mutual_information += 0
             elif attribute_conditioned_rating_probabilities[movie_id][attribute] == 0:
-                mutual_information += 0
+                movie_mutual_information += 0
             elif rating_probabilities[movie_id] == 0:
                 raise ValueError
 
             # rating = 0 term
             if (1 - attribute_conditioned_rating_probabilities[movie_id][attribute] != 0) and (1 - rating_probabilities[movie_id] != 0):
-                mutual_information += (attribute_probability[movie_id][attribute] * (1 - attribute_conditioned_rating_probabilities[movie_id][attribute]) *
+                movie_mutual_information += (attribute_probability[movie_id][attribute] * (1 - attribute_conditioned_rating_probabilities[movie_id][attribute]) *
                                        np.log2((1 - attribute_conditioned_rating_probabilities[movie_id][attribute]) / (1 - rating_probabilities[movie_id])))
             elif (1 - attribute_conditioned_rating_probabilities[movie_id][attribute] == 0) and (1 - rating_probabilities[movie_id] == 0):
-                mutual_information += 0
+                movie_mutual_information += 0
             elif 1 - attribute_conditioned_rating_probabilities[movie_id][attribute] == 0:
-                mutual_information += 0
+                movie_mutual_information += 0
             elif 1 - rating_probabilities[movie_id] == 0:
                 raise ValueError
+
+        # movie entropy
+        movie_entropy = 0
+        if (rating_probabilities[movie_id] != 0) and ((1 - rating_probabilities[movie_id]) != 0):
+            # rating = 1 term
+            movie_entropy -= (rating_probabilities[movie_id] * np.log2(rating_probabilities[movie_id]))
+            # rating = 1 term
+            movie_entropy -= ((1 - rating_probabilities[movie_id]) * np.log2((1 - rating_probabilities[movie_id])))
+
+        if (attribute_entropy != 0) and (movie_entropy != 0):
+            mutual_information += movie_mutual_information / np.sqrt(attribute_entropy * movie_entropy)
+        else:
+            mutual_information += 0
 
     return mutual_information / experiment_frame.index.get_level_values(1).unique().shape[0]
 

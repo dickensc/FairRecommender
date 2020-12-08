@@ -1,3 +1,0 @@
-// Biased ratings predictions
-1.0 : target(U, I) & group_member(U, '1') >> rating(U, I)
-1.0 : target(U, I) & group_member(U, '2') >> !rating(U, I)
