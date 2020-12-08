@@ -123,10 +123,10 @@ def evaluate_mutual_information(predicted_df, truth_df, observed_df, target_df, 
                                                                   lsuffix='_truth', rsuffix='_predicted')
 
     # Group experiment frames
-    group1_index = user_df.index[user_df.gender == "F"]
+    group1_index = experiment_frame.index.get_level_values(0).intersection(user_df.index[user_df.gender == "F"])
     group_1_experiment_frame = experiment_frame.loc[group1_index]
 
-    group2_index = user_df.index[user_df.gender == "M"]
+    group2_index = experiment_frame.index.get_level_values(0).intersection(user_df.index[user_df.gender == "M"])
     group_2_experiment_frame = experiment_frame.loc[group2_index]
 
     # Mutual Information
@@ -199,10 +199,10 @@ def evaluate_non_parity(predicted_df, truth_df, observed_df, target_df, user_df)
                                                             lsuffix='_truth', rsuffix='_predicted')
 
     # Group experiment frames
-    group1_index = user_df.index[user_df.gender == "F"]
+    group1_index = experiment_frame.index.get_level_values(0).intersection(user_df.index[user_df.gender == "F"])
     group_1_experiment_frame = experiment_frame.loc[group1_index]
 
-    group2_index = user_df.index[user_df.gender == "M"]
+    group2_index = experiment_frame.index.get_level_values(0).intersection(user_df.index[user_df.gender == "M"])
     group_2_experiment_frame = experiment_frame.loc[group2_index]
 
     return np.abs(group_1_experiment_frame.val_predicted.mean() - group_2_experiment_frame.val_predicted.mean())
@@ -222,10 +222,10 @@ def evaluate_value(predicted_df, truth_df, observed_df, target_df, user_df):
                                                             lsuffix='_truth', rsuffix='_predicted')
 
     # Group experiment frame
-    group1_index = user_df.index[user_df.gender == "F"]
+    group1_index = experiment_frame.index.get_level_values(0).intersection(user_df.index[user_df.gender == "F"])
     group_1_experiment_frame = experiment_frame.loc[group1_index]
 
-    group2_index = user_df.index[user_df.gender == "M"]
+    group2_index = experiment_frame.index.get_level_values(0).intersection(user_df.index[user_df.gender == "M"])
     group_2_experiment_frame = experiment_frame.loc[group2_index]
 
     group_1_by_item = group_1_experiment_frame.groupby(level=1)
@@ -259,10 +259,10 @@ def evaluate_absolute(predicted_df, truth_df, observed_df, target_df, user_df):
                                                             lsuffix='_truth', rsuffix='_predicted')
 
     # Group experiment frame
-    group1_index = user_df.index[user_df.gender == "F"]
+    group1_index = experiment_frame.index.get_level_values(0).intersection(user_df.index[user_df.gender == "F"])
     group_1_experiment_frame = experiment_frame.loc[group1_index]
 
-    group2_index = user_df.index[user_df.gender == "M"]
+    group2_index = experiment_frame.index.get_level_values(0).intersection(user_df.index[user_df.gender == "M"])
     group_2_experiment_frame = experiment_frame.loc[group2_index]
 
     group_1_by_item = group_1_experiment_frame.groupby(level=1)
@@ -298,10 +298,10 @@ def evaluate_under_estimation(predicted_df, truth_df, observed_df, target_df, us
                                                             lsuffix='_truth', rsuffix='_predicted')
 
     # Group experiment frame
-    group1_index = user_df.index[user_df.gender == "F"]
+    group1_index = experiment_frame.index.get_level_values(0).intersection(user_df.index[user_df.gender == "F"])
     group_1_experiment_frame = experiment_frame.loc[group1_index]
 
-    group2_index = user_df.index[user_df.gender == "M"]
+    group2_index = experiment_frame.index.get_level_values(0).intersection(user_df.index[user_df.gender == "M"])
     group_2_experiment_frame = experiment_frame.loc[group2_index]
 
     group_1_by_item = group_1_experiment_frame.groupby(level=1)
@@ -335,10 +335,10 @@ def evaluate_over_estimation(predicted_df, truth_df, observed_df, target_df, use
                                                             lsuffix='_truth', rsuffix='_predicted')
 
     # Group experiment frame
-    group1_index = user_df.index[user_df.gender == "F"]
+    group1_index = experiment_frame.index.get_level_values(0).intersection(user_df.index[user_df.gender == "F"])
     group_1_experiment_frame = experiment_frame.loc[group1_index]
 
-    group2_index = user_df.index[user_df.gender == "M"]
+    group2_index = experiment_frame.index.get_level_values(0).intersection(user_df.index[user_df.gender == "M"])
     group_2_experiment_frame = experiment_frame.loc[group2_index]
 
     group_1_by_item = group_1_experiment_frame.groupby(level=1)
