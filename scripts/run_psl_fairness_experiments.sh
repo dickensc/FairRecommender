@@ -11,7 +11,8 @@ readonly STUDY_NAME='fairness_study'
 
 #readonly FAIRNESS_MODELS='base non_parity value non_parity_value nb nmf non_parity_nmf_retro_fit value_nmf_retro_fit mutual_information'
 readonly FAIRNESS_MODELS='mutual_information'
-readonly FAIRNESS_WEIGHTS='LEARNED 0.00001 0.0001 0.001 0.01 0.1 1.0 10.0 100.0 1000.0 10000.0 100000.0'
+readonly FAIRNESS_WEIGHTS='LEARNED 0.00001 0.0001 0.001 0.01 0.1 1.0 10.0 100.0 1000.0 10000.0 100000.0 1000000.0 10000000.0'
+readonly FAIRNESS_WEIGHTS='1000000.0 10000000.0'
 readonly WL_METHODS='UNIFORM'
 readonly SEED=4
 readonly TRACE_LEVEL='TRACE'
@@ -31,7 +32,7 @@ SUPPORTED_FAIR_WEIGHTS[value]='LEARNED'
 SUPPORTED_FAIR_WEIGHTS[non_parity_value]='LEARNED'
 SUPPORTED_FAIR_WEIGHTS[nb]='LEARNED'
 SUPPORTED_FAIR_WEIGHTS[nmf]='LEARNED'
-SUPPORTED_FAIR_WEIGHTS[mutual_information]='0.01 0.1 1.0 10.0 100.0 1000.0 10000.0 10000.0 100000.0 1000000.0'
+SUPPORTED_FAIR_WEIGHTS[mutual_information]='0.01 0.1 1.0 10.0 100.0 1000.0 10000.0 10000.0 100000.0 1000000.0 10000000.0'
 SUPPORTED_FAIR_WEIGHTS[non_parity_nmf_retro_fit]='0.01 0.1 1.0 10.0 100.0 1000.0 10000.0'
 SUPPORTED_FAIR_WEIGHTS[value_nmf_retro_fit]='0.00001 0.0001 0.001 0.01 0.1 1.0 10.0'
 
@@ -50,6 +51,7 @@ LEARNING_RATES['1000.0']='-D sgd.learningrate=100.0'
 LEARNING_RATES['10000.0']='-D sgd.learningrate=1000.0'
 LEARNING_RATES['100000.0']='-D sgd.learningrate=1000.0'
 LEARNING_RATES['1000000.0']='-D sgd.learningrate=1000.0'
+LEARNING_RATES['10000000.0']='-D sgd.learningrate=1000.0'
 
 # Evaluators to be use for each example
 # todo: (Charles D.) just read this information from psl example data directory rather than hardcoding
