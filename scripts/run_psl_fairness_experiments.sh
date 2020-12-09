@@ -11,7 +11,7 @@ readonly STUDY_NAME='fairness_study'
 
 #readonly FAIRNESS_MODELS='base non_parity value non_parity_value nb nmf non_parity_nmf_retro_fit value_nmf_retro_fit mutual_information'
 readonly FAIRNESS_MODELS='mutual_information'
-readonly FAIRNESS_WEIGHTS='LEARNED 0.00001 0.0001 0.001 0.01 0.1 1.0 10.0 100.0 1000.0 10000.0 100000.0 1000000.0 10000000.0'
+#readonly FAIRNESS_WEIGHTS='LEARNED 0.00001 0.0001 0.001 0.01 0.1 1.0 10.0 100.0 1000.0 10000.0 100000.0 1000000.0 10000000.0'
 readonly FAIRNESS_WEIGHTS='1000000.0 10000000.0'
 readonly WL_METHODS='UNIFORM'
 readonly SEED=4
