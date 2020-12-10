@@ -1,6 +1,5 @@
 predicates:
     user/1: closed
-    item/1: closed
     target/2: closed
     sim_content_items/2: closed
     sim_demo_users/2: closed
@@ -18,7 +17,6 @@ predicates:
 observations:
     user: ../data/movielens/0/eval/user_obs.txt
     target: ../data/movielens/0/eval/target_obs.txt
-    item: ../data/movielens/0/eval/item_obs.txt
     rated: ../data/movielens/0/eval/rated_obs.txt
     group_member: ../data/movielens/0/eval/group_member_obs.txt
 
