@@ -50,8 +50,8 @@ LEARNING_RATES['100.0']='-D sgd.learningrate=100.0'
 LEARNING_RATES['1000.0']='-D sgd.learningrate=100.0'
 LEARNING_RATES['10000.0']='-D sgd.learningrate=1000.0'
 LEARNING_RATES['100000.0']='-D sgd.learningrate=1000.0'
-LEARNING_RATES['1000000.0']='-D sgd.learningrate=1000.0'
-LEARNING_RATES['10000000.0']='-D sgd.learningrate=1000.0'
+LEARNING_RATES['1000000.0']='-D sgd.learningrate=10000.0'
+LEARNING_RATES['10000000.0']='-D sgd.learningrate=10000.0'
 
 # Evaluators to be use for each example
 # todo: (Charles D.) just read this information from psl example data directory rather than hardcoding
@@ -126,7 +126,7 @@ function run_evaluation() {
         # call inference script for SRL model type
         pushd . > /dev/null
             cd "psl_scripts" || exit
-            ./run_inference.sh "${example_name}" "${evaluator}" "${fairness_model}" "${fold}" "${out_directory}" "${LEARNING_RATES[${fairness_weight}]}"> "$out_path" 2> "$err_path"
+            ./run_inference.sh "${example_name}" "${evaluator}" "${fairness_model}" "${fold}" "${out_directory}" ${LEARNING_RATES[${fairness_weight}]}> "$out_path" 2> "$err_path"
         popd > /dev/null
     fi
 }
