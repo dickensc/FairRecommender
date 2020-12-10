@@ -194,7 +194,10 @@ def evaluate_mutual_information(predicted_df, truth_df, observed_df, target_df, 
             movie_entropy -= ((1 - rating_probabilities[movie_id]) * np.log2((1 - rating_probabilities[movie_id])))
 
         if (attribute_entropy != 0) and (movie_entropy != 0):
-            mutual_information += movie_mutual_information / np.sqrt(attribute_entropy * movie_entropy)
+            # NMI
+            # mutual_information += movie_mutual_information / np.sqrt(attribute_entropy * movie_entropy)
+            # MI
+            mutual_information += movie_mutual_information
         else:
             mutual_information += 0
 
