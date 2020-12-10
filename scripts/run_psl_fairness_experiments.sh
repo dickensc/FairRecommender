@@ -51,7 +51,7 @@ LEARNING_RATES['1000.0']='-D sgd.learningrate=100.0'
 LEARNING_RATES['10000.0']='-D sgd.learningrate=1000.0'
 LEARNING_RATES['100000.0']='-D sgd.learningrate=1000.0'
 LEARNING_RATES['1000000.0']='-D sgd.learningrate=10000.0'
-LEARNING_RATES['10000000.0']='-D sgd.learningrate=10000.0'
+LEARNING_RATES['10000000.0']='-D sgd.learningrate=10000.0 -D reasoner.tolerance=1e-15f'
 
 # Evaluators to be use for each example
 # todo: (Charles D.) just read this information from psl example data directory rather than hardcoding
