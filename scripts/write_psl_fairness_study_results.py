@@ -37,9 +37,9 @@ EVALUATOR_NAME_TO_METHOD = {
 FAIRNESS_NAME_TO_EVALUATOR = {
     'non_parity': evaluate_non_parity,
     'value': evaluate_value,
-    # 'over_estimation': evaluate_over_estimation,
-    # 'under_estimation': evaluate_under_estimation,
-    # 'absolute': evaluate_absolute,
+    'over_estimation': evaluate_over_estimation,
+    'under_estimation': evaluate_under_estimation,
+    'absolute': evaluate_absolute,
     'mutual_information': evaluate_mutual_information
 }
 

@@ -13,7 +13,7 @@ readonly STANDARD_PSL_OPTIONS="--postgres ${POSTGRES_DB}"
 
 readonly ADDITIONAL_PSL_OPTIONS='--int-ids  --postgres psl -D log4j.threshold=TRACE'
 readonly ADDITIONAL_LEARN_OPTIONS='--learn org.linqs.psl.application.learning.weight.bayesian.GaussianProcessPrior -D random.seed=4 -D admmreasoner.initialconsensusvalue=ZERO -D gppker.reldep=1 -D gpp.explore=1 -D gpp.maxiterations=25 -D gppker.space=SS -D gpp.initialweightstd=0.5 -D gpp.initialweightvalue=0.5 -D log4j.threshold=TRACE  -D weightlearning.evaluator=org.linqs.psl.evaluation.statistics.ContinuousEvaluator '
-readonly ADDITIONAL_EVAL_OPTIONS='--infer SGDInference -D sgd.learningrate=1.0 -D sgd.maxiterations=500 --eval org.linqs.psl.evaluation.statistics.ContinuousEvaluator '
+readonly ADDITIONAL_EVAL_OPTIONS='--infer SGDInference -D sgd.maxiterations=500 --eval org.linqs.psl.evaluation.statistics.ContinuousEvaluator '
 
 readonly JAVA_MEM_GB=24
 
@@ -28,7 +28,7 @@ function main() {
    # fetch_psl
 
    # Run PSL
-   # runWeightLearning "$@"
+   runWeightLearning "$@"
    runEvaluation "$@"
 }
 
