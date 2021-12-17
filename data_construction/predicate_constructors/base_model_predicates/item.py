@@ -6,7 +6,7 @@ from helpers import write
 
 def item_predicate(observed_ratings_df, truth_ratings_df, fold='0', phase='eval'):
     """
-    Item Predicates
+    Scoping predicate identifying movies.
     """
     observed_ratings_series = observed_ratings_df.loc[:, 'rating']
     truth_ratings_series = truth_ratings_df.loc[:, 'rating']

@@ -5,7 +5,7 @@ from helpers import write
 
 def ratings_predicate(ratings_df, partition='obs', fold='0', phase='eval', write_value=True):
     """
-    Ratings Predicates
+    The open predicate representing a users rating of a movie.
     """
     ratings_series = ratings_df.loc[:, ['rating']]
 

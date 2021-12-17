@@ -5,7 +5,7 @@ from helpers import write
 
 def average_user_rating_predicate(observed_ratings_df, fold='0', phase='eval'):
     """
-    Rated Predicates
+    Averagee rating provided by a user across all movies.
     """
     observed_ratings_series = observed_ratings_df.loc[:, 'rating']
 

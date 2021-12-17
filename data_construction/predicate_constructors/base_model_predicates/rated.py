@@ -6,7 +6,7 @@ from helpers import write
 
 def rated_predicate(observed_ratings_df, truth_ratings_df, partition='obs', fold='0', phase='eval'):
     """
-    Rated Predicates
+    Scoping predicate identifying whether a item was rated.
     """
     observed_ratings_series = observed_ratings_df.loc[:, 'rating']
     truth_ratings_series = truth_ratings_df.loc[:, 'rating']

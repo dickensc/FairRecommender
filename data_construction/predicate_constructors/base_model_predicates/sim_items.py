@@ -27,8 +27,8 @@ def sim_items_predicate(observed_ratings_df, movies, fold='0', phase='eval'):
     item_cosine_similarity_block_index = pd.MultiIndex.from_arrays([item_index, flattened_frame])
     item_cosine_similarity_block_series = pd.Series(data=1, index=item_cosine_similarity_block_index)
 
-    # # populate the item_content_similarity_block_series with the similarity value
-    # for index in item_cosine_similarity_block_index:
-    #     item_cosine_similarity_block_series.loc[index] = item_cosine_similarity_frame.loc[index[0], index[1]]
+    # populate the item_content_similarity_block_series with the similarity value
+    for index in item_cosine_similarity_block_index:
+        item_cosine_similarity_block_series.loc[index] = item_cosine_similarity_frame.loc[index[0], index[1]]
 
     write(item_cosine_similarity_block_series, 'sim_items_obs', fold, phase)

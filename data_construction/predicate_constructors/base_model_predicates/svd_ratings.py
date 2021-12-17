@@ -10,7 +10,7 @@ import pandas as pd
 
 def svd_ratings_predicate(observed_ratings_df, truth_ratings_df, fold='0', phase='eval'):
     """
-    pmf_ratings Predicates
+    Singular value decomposition matrix factorization prediction of user item rating.
     """
     print("SVD predicates")
     svd_model = SVD()

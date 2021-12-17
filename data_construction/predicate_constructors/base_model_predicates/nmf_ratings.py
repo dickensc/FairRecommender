@@ -9,7 +9,7 @@ import pandas as pd
 
 def nmf_ratings_predicate(observed_ratings_df, truth_ratings_df, fold='0', phase='eval'):
     """
-    nmf_ratings Predicates
+    The Non-negative matrix factorization prediction.
     """
     print("NMF predicates")
     nmf_model = NMF()

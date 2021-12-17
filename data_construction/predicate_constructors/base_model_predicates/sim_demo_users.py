@@ -29,9 +29,9 @@ def sim_demo_users_predicate(user_df, fold='0', phase='eval'):
     user_demo_similarity_block_index = pd.MultiIndex.from_arrays([user_index, flattened_frame])
     user_demo_similarity_block_series = pd.Series(data=1, index=user_demo_similarity_block_index)
 
-    # # populate the item_content_similarity_block_series with the similarity value
-    # for index in user_demo_similarity_block_index:
-    #     user_demo_similarity_block_series.loc[index] = user_similarity_df.loc[index[0], index[1]]
+    # populate the item_content_similarity_block_series with the similarity value
+    for index in user_demo_similarity_block_index:
+        user_demo_similarity_block_series.loc[index] = user_similarity_df.loc[index[0], index[1]]
 
     write(user_demo_similarity_block_series, 'sim_demo_users_obs', fold, phase)
 

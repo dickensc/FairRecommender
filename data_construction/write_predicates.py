@@ -47,9 +47,6 @@ N_FOLDS = 5
 
 def construct_movielens_predicates():
     """
-    """
-
-    """
     Create data directory to write output to
     """
     if not os.path.exists(DATA_PATH):
@@ -61,13 +58,13 @@ def construct_movielens_predicates():
     movies_df, ratings_df, user_df = load_dataframes()
     movies_df, ratings_df, user_df = filter_dataframes(movies_df, ratings_df, user_df)
     # note that truth and target will have the same atoms
-    # observed_ratings_df_list, train_ratings_df_list, test_ratings_df_list = partition_by_timestamp(ratings_df, N_FOLDS)
-    observed_ratings_df_list, train_ratings_df_list, test_ratings_df_list = partition_randomly(ratings_df, N_FOLDS)
+    observed_ratings_df_list, train_ratings_df_list, test_ratings_df_list = partition_by_timestamp(ratings_df, N_FOLDS)
+    # observed_ratings_df_list, train_ratings_df_list, test_ratings_df_list = partition_randomly(ratings_df, N_FOLDS)
 
     for fold, (observed_ratings_df, train_ratings_df, test_ratings_df) in \
             enumerate(zip(observed_ratings_df_list, train_ratings_df_list, test_ratings_df_list)):
 
-        # Standardized
+        # Standardized.
         # # Learn
         # standardized_observed_ratings_df, standardized_truth_ratings_df = standardize_ratings(observed_ratings_df,
         #                                                                                       train_ratings_df)
@@ -82,15 +79,15 @@ def construct_movielens_predicates():
 
         # Un-standardized
         print("Fold: {} train predicates".format(fold))
+        print("Learn Target Count: {}".format(train_ratings_df.shape[0]))
         # Learn
-        write_predicates(observed_ratings_df, train_ratings_df,
-                         user_df, movies_df, 'learn', fold)
+        write_predicates(observed_ratings_df, train_ratings_df, user_df, movies_df, 'learn', fold)
 
         print("Fold: {} eval predicates".format(fold))
-        print("Test Size: {}".format(test_ratings_df.shape[0]))
+        print("Test Target Count: {}".format(test_ratings_df.shape[0]))
         # Eval
-        write_predicates(observed_ratings_df.append(train_ratings_df, verify_integrity=True), test_ratings_df,
-                         user_df, movies_df, 'eval', fold)
+        write_predicates(observed_ratings_df.append(train_ratings_df, verify_integrity=True),
+                         test_ratings_df, user_df, movies_df, 'eval', fold)
 
 
 def write_predicates(observed_ratings_df, truth_ratings_df, user_df, movies_df, phase, fold):
@@ -106,26 +103,29 @@ def write_predicates(observed_ratings_df, truth_ratings_df, user_df, movies_df, 
     ratings_predicate(truth_ratings_df, partition='targets', fold=str(fold), phase=phase, write_value=False)
     ratings_predicate(truth_ratings_df, partition='truth', fold=str(fold), phase=phase, write_value=True)
 
+    # Local predictor predicates
     nmf_ratings_predicate(observed_ratings_df, truth_ratings_df, fold=str(fold), phase=phase)
     svd_ratings_predicate(observed_ratings_df, truth_ratings_df, fold=str(fold), phase=phase)
     nb_ratings_predicate(observed_ratings_df, truth_ratings_df, user_df, movies_df, fold=str(fold), phase=phase)
 
+    # Average predicates
     average_item_rating_predicate(observed_ratings_df, fold=str(fold), phase=phase)
     average_user_rating_predicate(observed_ratings_df, fold=str(fold), phase=phase)
 
+    # Similarity predicates
     sim_content_predicate(movies_df, fold=str(fold), phase=phase)
     sim_demo_users_predicate(user_df, fold=str(fold), phase=phase)
     sim_items_predicate(observed_ratings_df, movies, fold=str(fold), phase=phase)
     sim_users_predicate(observed_ratings_df, users, fold=str(fold), phase=phase)
 
+    # Scoping and blocking predicates
     item_predicate(observed_ratings_df, truth_ratings_df, fold=str(fold), phase=phase)
     user_predicate(observed_ratings_df, truth_ratings_df, fold=str(fold), phase=phase)
     rated_predicate(observed_ratings_df, truth_ratings_df, fold=str(fold), phase=phase)
     target_predicate(truth_ratings_df, fold=str(fold), phase=phase)
 
     # fairness intervention predicates
-    group_predicate(user_df, fold=str(fold), phase=phase)
-    constant_predicate(fold=str(fold), phase=phase)
+    group_predicate(fold=str(fold), phase=phase)
     negative_prior(fold=str(fold), phase=phase)
     positive_prior(fold=str(fold), phase=phase)
     group_member_predicate(user_df, fold=str(fold), phase=phase)
@@ -206,7 +206,7 @@ def filter_frame_by_group_rating(observed_ratings_df, truth_ratings_df, user_df)
 
 def filter_dataframes(movies_df, ratings_df, user_df, n=50, genres=None):
     """
-    Preprocessing steps followed by Yao and Huang and Farnadi, Kouki, Thompson, Srinivasan, and  Getoor
+    Pre-processing steps followed by Yao and Huang and Farnadi, Kouki, Thompson, Srinivasan, and  Getoor.
     Get rid of users who have not yet rated more than n movies.
     Remove movie that are not tagged with at least on of the genres: action romance crime musical and sci-fi
     """
@@ -227,8 +227,6 @@ def filter_dataframes(movies_df, ratings_df, user_df, n=50, genres=None):
     # filter movies in movie df
     filtered_movies_df = filtered_movies_df.loc[filtered_ratings_df.index.get_level_values('movieId').unique()]
 
-    # TODO: (Charles) Testing Purposes
-    # filtered_ratings_df = filtered_ratings_df.sample(100)
     return filtered_movies_df, filtered_ratings_df, filtered_user_df
 
 

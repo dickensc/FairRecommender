@@ -8,7 +8,7 @@ sys.path.insert(0, '../..')
 
 def nb_ratings_predicate(observed_ratings_df, truth_ratings_df, user_df, movies_df, fold='0', phase='eval'):
     """
-    nb_ratings Predicates. The multinomial naive bayes multi-class classifier predictions
+    The multinomial naive bayes multi-class classifier predictions
     """
 
     print("Naive Bayes Local Predictor")
