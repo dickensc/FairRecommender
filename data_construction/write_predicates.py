@@ -40,7 +40,8 @@ from predicate_constructors.fairness_predicates.group_denominator import group_d
 from predicate_constructors.mf_predicates.group_member import group_member_mf
 from predicate_constructors.mf_predicates.ratings import ratings_mf
 
-DATA_PATH = "../psl-datasets/movielens/data"
+THIS_DIR = os.path.dirname(os.path.realpath(__file__))
+DATA_PATH = os.path.join(THIS_DIR, "../psl-datasets/movielens/data")
 N_FOLDS = 5
 
 

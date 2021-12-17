@@ -5,7 +5,8 @@ import os
 from sklearn.metrics import pairwise_distances
 from scipy.spatial.distance import jaccard
 
-DATA_PATH = '../psl-datasets/movielens/data/movielens/'
+THIS_DIR = os.path.dirname(os.path.realpath(__file__))
+DATA_PATH = os.path.join(THIS_DIR, '../psl-datasets/movielens/data/movielens/')
 
 
 def write(frame, predicate_name, fold, setting):
